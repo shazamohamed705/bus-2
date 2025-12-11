@@ -299,13 +299,13 @@ const Home = () => {
     },
     {
       title: 'حجز سريع خلال ثوان',
-      description: 'واجهة بسيطة وسهلة تساعدك الحجز مشوارك في أقل وقت وتبدأ رحلتك فورا.',
+      description: 'واجهة بسيطة وسهلة تساعدك الحجز مشوارك في أقل وقت وتبدأ رحلتك فورََا.',
       icon: FaCar,
       side: 'left',
       position: 'bottom'
     },
     {
-      title: 'تتبع الرحلة لحظة بلحظة',
+      title: 'تتبّع الرحلة لحظة بلحظة',
       description: 'اعرف مكان السائق في أي وقت وحدد وقت الوصول المتوقع بدقة بدون قلق أو انتظار طويل.',
       icon: FaMapMarkerAlt,
       side: 'right',
@@ -324,19 +324,19 @@ const Home = () => {
   const reviews = [
     {
       name: 'محمد يوسف',
-      text: 'جربته لأول مرة وكان سريع جدا في الاستجابة، من أول التسجيل لحد نهاية الرحلة.. كل حاجة سلسة ومرتبة.'
+      text: 'جربته لأول مرة وكان سريع جدًا في الاستجابة، من أول التسجيل لحد نهاية الرحلة.. كل حاجة سلسة ومرتبة.'
     },
     {
       name: 'كريم علاء',
-      text: 'أسعار مناسبة جدا مقارنة بالتطبيقات الثانية، والتطبيق سهل وبسيط إن شاء الله هيفضل اختياري الأول.'
+      text: 'أسعار مناسبة جدّا مقارنة بالتطبيقات الثانية، والتطبيق سهل وبسيط إن شاء اللّه هيفضل اختياري الأول.'
     },
     {
       name: 'احمد محمد',
-      text: 'أكثر حاجة عجبتني إن الرحلة بتظهر لحظة بلحظة، وده بيطمني جدا خصوصا بالليل التجربة كلها كانت سهلة ومريحة.'
+      text: 'أكثر حاجة عجبتني إن الرحلة بتظهر لحظة بلحظة، وده بيطمني جدّا خصوصََا بالليل التجربة كلها كانت سهلة ومريحة.'
     },
     {
       name: 'أحمد سامى',
-      text: 'الخدمة ممتازة جدا، أول ما يفتح التطبيق بلاقي عربية قريبة. والسواقين محترمين جدا. بقى التطبيق الأساسي في مشاويري اليومية.'
+      text: 'الخدمة ممتازة جدّا، أول ما يفتح التطبيق بلاقي عربية قريبة. والسواقين محترمين جدّا. بقى التطبيق الأساسي في مشاويري اليومية.'
     }
   ];
 
@@ -760,7 +760,7 @@ const Home = () => {
                     direction: 'rtl'
                   }}
                 >
-                  الخدمة ممتازة جدا، أول ما يفتح التطبيق بلاقي عربية قريبة. والسواقين محترمين جدا.
+                  الخدمة ممتازة جدََا، أول ما يفتح التطبيق بلاقي عربية قريبة. والسواقين محترمين جدََا. بقى التطبيق الأساسي في مشاويري اليومية.
                 </p>
                 {/* Speech bubble tail - يشير لأسفل */}
                 <div
@@ -1045,7 +1045,7 @@ const Home = () => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          gap: isMobile ? '12px' : isTablet ? '30px' : '60px', // Increased gap for desktop to separate features from phone
+          gap: isMobile ? '12px' : isTablet ? '30px' : '80px', // Increased gap for desktop to separate features from phone
           flexWrap: 'wrap',
           flexDirection: isMobile ? 'column' : 'row'
         }}
@@ -1060,7 +1060,8 @@ const Home = () => {
               flex: '1',
               maxWidth: isTablet ? '250px' : '300px',
               alignItems: 'flex-end',
-              order: 1
+              order: 1,
+              marginRight: isTablet ? '10px' : '20px'
             }}
           >
             {features
@@ -1100,6 +1101,7 @@ const Home = () => {
               gridTemplateColumns: '1fr auto 1fr',
               gridTemplateRows: 'auto auto',
               gap: '12px',
+              columnGap: '20px',
               justifyContent: 'center',
               alignItems: 'center',
               width: '100%',
@@ -1119,7 +1121,8 @@ const Home = () => {
                     alignItems: 'center',
                     textAlign: 'center',
                     gridColumn: '1',
-                    gridRow: '1'
+                    gridRow: '1',
+                    marginRight: '8px'
                   }}
                 >
                   <div style={{ fontSize: '22px', marginBottom: '2px', color: '#000' }}>
@@ -1264,7 +1267,8 @@ const Home = () => {
                     alignItems: 'center',
                     textAlign: 'center',
                     gridColumn: '1',
-                    gridRow: '2'
+                    gridRow: '2',
+                    marginRight: '8px'
                   }}
                 >
                   <div style={{ fontSize: '22px', marginBottom: '2px', color: '#000' }}>
