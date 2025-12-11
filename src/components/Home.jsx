@@ -691,7 +691,7 @@ const Home = () => {
               padding: '0',
               boxShadow: '0 8px 30px rgba(0,0,0,0.2)',
               position: 'relative',
-              border: '4px solid rgba(205, 179, 179, 0.4)',
+              border: '4px solid #e7e7e7',
               overflow: 'hidden',
               backgroundColor: 'rgba(253, 227, 229, 0.3)' // Removed striped background
             }}
@@ -720,14 +720,17 @@ const Home = () => {
                   right: isMobile ? 'auto' : 'auto',
                   transform: 'translateY(-50%)',
                   backgroundColor: '#ffffff',
-                  borderRadius: '12px',
-                  padding: isMobile ? '6px 8px' : '8px 10px',
+                  borderRadius: '6px',
+                  padding: isMobile ? '10px 14px' : '12px 16px',
                   boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
                   zIndex: 10,
-                  maxWidth: isMobile ? '75%' : '70%',
+                  width: isMobile ? 'calc(100% - 8px)' : 'calc(100% - 12px)',
+                  maxWidth: isMobile ? 'calc(100% - 8px)' : 'calc(100% - 12px)',
+                  minHeight: isMobile ? '60px' : '70px',
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: isMobile ? '4px' : '5px'
+                  gap: isMobile ? '4px' : '6px',
+                  boxSizing: 'border-box'
                 }}
               >
                 {/* Name - في الأعلى */}
@@ -827,7 +830,7 @@ const Home = () => {
               overflowWrap: isMobile ? 'break-word' : 'normal'
             }}
           >
-            وصل مشاويرك بسهولة وامان   مع تطبيقنا 
+            وصّل مشاويرك بسهولة وامان   مع تطبيقنا 
           </h1>
           <p
             style={{
@@ -2080,7 +2083,7 @@ const Home = () => {
             style={{
               position: 'absolute',
               top: 'auto',
-              bottom: isMobile ? '270px' : isTablet ? '60px' : isIPadPro ? '20px' : '15px',
+              bottom: isMobile ? '270px' : isTablet ? '60px' : isIPadPro ? '20px' : '40px', // Moved up for desktop
               right: isMobile ? '10px' : isTablet ? '95px' : isIPadPro ? '95px' : '95px',
               left: isMobile ? 'auto' : 'auto',
               zIndex: 20
