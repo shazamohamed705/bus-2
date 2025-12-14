@@ -963,10 +963,9 @@ const Home = () => {
               alignItems: 'center',
               gap: '6px'
             }}
-          >            <FaCheckCircle style={{ fontSize: isMobile ? (isPortrait ? '0.6rem' : '0.4rem') : (isPortrait ? '2.2rem' : '1.4rem'), marginRight: '0' }} />
- 
-
- اشترك معنا وخلّي رحلاتك دائمًا نظامية وآمنة    </h1>
+          >
+            اشترك معنا وخلّي رحلاتك دائمًا نظامية وآمنة <FaCheckCircle style={{ fontSize: isMobile ? (isPortrait ? '0.6rem' : '0.4rem') : (isPortrait ? '2.2rem' : '1.4rem'), marginRight: '0' }} />
+          </h1>
           <p
             style={{
               fontSize: isMobile 
