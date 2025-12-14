@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { FaWallet, FaCar, FaMapMarkerAlt, FaShieldAlt, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaWallet, FaCar, FaMapMarkerAlt, FaShieldAlt, FaChevronLeft, FaChevronRight, FaCheckCircle, FaTiktok, FaSnapchat } from 'react-icons/fa';
 import { HiOutlineMail, HiOutlineLocationMarker } from 'react-icons/hi';
 import { FiFacebook } from 'react-icons/fi';
 import { PiTelegramLogoLight, PiGithubLogo } from 'react-icons/pi';
 import { BiLogoInstagram } from 'react-icons/bi';
+import ReactCountryFlag from 'react-country-flag';
 // Import images - adjust paths based on your assets folder location
 // import googlePlay from '../assets/googleplay.png';
 // import appstore from '../assets/appstore.jpg';
@@ -30,7 +31,10 @@ const Home = () => {
     const largeiPhone = (width >= 375 && width <= 600 && height >= 700) ||
                         (height >= 375 && height <= 600 && width >= 700);
     
-    return { mobile, tablet, iPadPro, largeiPhone, isPortrait, isLandscape };
+    // iPhone SE detection - small screen iPhone
+    const iPhoneSE = (width <= 375 && height <= 700) || (height <= 375 && width <= 700);
+    
+    return { mobile, tablet, iPadPro, largeiPhone, iPhoneSE, isPortrait, isLandscape };
   };
   
   const initialState = getResponsiveState();
@@ -38,6 +42,7 @@ const Home = () => {
   const [isTablet, setIsTablet] = useState(initialState.tablet);
   const [isIPadPro, setIsIPadPro] = useState(initialState.iPadPro);
   const [isLargeiPhone, setIsLargeiPhone] = useState(initialState.largeiPhone);
+  const [isiPhoneSE, setIsiPhoneSE] = useState(initialState.iPhoneSE);
   const [isPortrait, setIsPortrait] = useState(initialState.isPortrait);
   const [isLandscape, setIsLandscape] = useState(initialState.isLandscape);
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
@@ -56,6 +61,7 @@ const Home = () => {
       setIsTablet(state.tablet);
       setIsIPadPro(state.iPadPro);
       setIsLargeiPhone(state.largeiPhone);
+      setIsiPhoneSE(state.iPhoneSE);
       setIsPortrait(state.isPortrait);
       setIsLandscape(state.isLandscape);
       setWindowHeight(window.innerHeight);
@@ -187,6 +193,16 @@ const Home = () => {
     };
   }, []);
   
+  // Adjust carousel slide for mobile (skip first image)
+  useEffect(() => {
+    if (isMobile && currentSlide === 0) {
+      setCurrentSlide(1);
+    } else if (!isMobile && currentSlide >= 1) {
+      // Reset to 0 when switching from mobile to desktop
+      setCurrentSlide(0);
+    }
+  }, [isMobile]);
+  
   // Calculate dynamic paddingBottom based on content and orientation
   const backgroundPaddingBottom = useMemo(() => {
     // Use calc() for better browser compatibility with vh units
@@ -265,8 +281,18 @@ const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   
   // Phone mockups for carousel
-  const phoneMockups = Array.from({ length: 5 }, (_, i) => i);
-  
+  const phoneMockups = [
+    { image: "/1.jpeg" },
+    { image: "/9.jpeg" },
+    { image: "/8.jpeg" },
+    { image: "/2.jpeg" },
+    { image: "/3.jpeg" },
+    { image: "/4.jpeg" },
+    { image: "/5.jpeg" },
+    { image: "/6.jpeg" },
+    { image: "/7.jpeg" },
+  ];
+    
   // Calculate max slide based on visible phones (responsive)
   const phonesPerView = isMobile ? 1 : isTablet ? 2 : 3;
   const maxSlide = Math.max(0, phoneMockups.length - phonesPerView);
@@ -288,55 +314,141 @@ const Home = () => {
     });
   };
 
+  
+
   // Features data
   const features = [
     {
-      title: 'طرق دفع مرنة ومناسبة لك',
-      description: 'الدفع كاش أو فيزا أو من خلال محفظتك داخل التطبيق بكل سهولة وبدون تعقيد.',
+      title: 'طرق دفع مرنة تناسبك مع الباقات المميزة للاشتراك في تطبيق كشف الركاب.',
+      description: `  
+    يمكنك الدفع بأي وسيلة متاحة لأصحاب الباصات والحافلات: كاش، فيزا، أو تحويل بنكي، لتسهيل إدارة رحلاتك بكل راحة`,
       icon: FaWallet,
       side: 'left',
       position: 'top'
     },
     {
-      title: 'حجز سريع خلال ثوان',
-      description: 'واجهة بسيطة وسهلة تساعدك الحجز مشوارك في أقل وقت وتبدأ رحلتك فورََا.',
+      title: 'اصدر رحلتك ف لحظات مع البركود المعتمد ',
+      description: `
+سجّل بيانات الركاب بسرعة مع تطبيق كشف الركاب، واستفد من ميزة جلب البيانات بالكاميرا أو الصور من الاستديو.
+أصدر رحلتك بسرعة ودقة، مع إمكانية إضافة البيانات يدويًا، لتتمكن من تسجيل بيانات الركاب بأي طريقة تناسبك، وكل شيء منظم بدون أخذ وقت إضافي.`,
+
       icon: FaCar,
       side: 'left',
       position: 'bottom'
     },
     {
-      title: 'تتبّع الرحلة لحظة بلحظة',
-      description: 'اعرف مكان السائق في أي وقت وحدد وقت الوصول المتوقع بدقة بدون قلق أو انتظار طويل.',
+      title: 'مع تطبيق كشف الركاب ',
+      description: `يوفر إصدار كشف الركاب بسرعة وسهولة، مع ضمان مطابقة بيانات جميع الركاب لمواصفات وزارة النقل.
+حل إلكتروني آمن يساعد السائق وأصحاب المؤسسات على تنظيم الرحلات وتفادي المخالفات، لتبقى رحلتك دائمًا في أمان.
+`,
       icon: FaMapMarkerAlt,
       side: 'right',
       position: 'top'
     },
     {
-      title: 'أمان وثقة في كل مشوار',
-      description: 'سائقين موثوقين بعد مراجعة هويتهم وتقييماتهم لضمان رحلة امنة ومريحة',
+      title: 'أمان وثقة في كل رحلة صادرة من تطبيق كشف الركاب',
+      description: `كل رحلة معتمدة، كل سائق موثوق.
+    مع نظام مراجعة الهوية والتقييم المستمر، نحرص على توفير نقل آمن ومريح لجميع الركاب.
+    
+    رحلتك آمنة… وسائقك موثوق.`,
       icon: FaShieldAlt,
       side: 'right',
       position: 'bottom'
     }
+    
   ];
 
   // Reviews data
   const reviews = [
     {
-      name: 'محمد يوسف',
-      text: 'جربته لأول مرة وكان سريع جدًا في الاستجابة، من أول التسجيل لحد نهاية الرحلة.. كل حاجة سلسة ومرتبة.'
+      name: 'أبو خالد – صاحب مؤسسة نقل',
+      text: 'تطبيق كشف الركاب وفر علينا وقت وجهد كبير. الكشوفات تطلع خلال دقائق وبشكل نظامي ومعتمد، وارتحت من المخالفات والتفتيش.',
+      countryCode: ''
     },
     {
-      name: 'كريم علاء',
-      text: 'أسعار مناسبة جدّا مقارنة بالتطبيقات الثانية، والتطبيق سهل وبسيط إن شاء اللّه هيفضل اختياري الأول.'
+      name: 'سالم – سائق حافلة بين المدن',
+      text: 'التطبيق سهل جدًا، استخدمته من أول يوم بدون أي تعقيد. تسجيل الرحلة والركاب واضح، والباركود يخليك مطمن في أي نقطة تفتيش.',
+      countryCode: ''
     },
     {
-      name: 'احمد محمد',
-      text: 'أكثر حاجة عجبتني إن الرحلة بتظهر لحظة بلحظة، وده بيطمني جدّا خصوصََا بالليل التجربة كلها كانت سهلة ومريحة.'
+      name: 'محمد – مشرف تشغيل',
+      text: 'كنا نكتب الكشوفات يدوي، الآن كل شيء إلكتروني ومحفوظ. تفاصيل الرحلة والركاب متسجلة بدقة، وفر علينا أخطاء كثيرة.',
+      countryCode: ''
     },
     {
-      name: 'أحمد سامى',
-      text: 'الخدمة ممتازة جدّا، أول ما يفتح التطبيق بلاقي عربية قريبة. والسواقين محترمين جدّا. بقى التطبيق الأساسي في مشاويري اليومية.'
+      name: 'أبو فيصل – مالك أسطول نقل',
+      text: 'أفضل ميزة في تطبيق كشف الركاب إنه يساعدنا نكون ملتزمين بتعليمات وزارة النقل، وسهولة المتابعة خلّت الإدارة أسهل بكثير.',
+      countryCode: 'SA'
+    },
+    {
+      name: 'أبو ناصر – صاحب حافلة نقل',
+      text: 'تطبيق كشف الركاب مريح جدًا وواضح، اللغة العربية ممتازة وما فيه أي تعقيد. أنصح فيه كل سائق يبي يشتغل وهو مرتاح ونظامي.',
+      countryCode: 'SA'
+    },
+    {
+      name: 'فهد – مشرف أسطول',
+      text: 'التحكم في الرحلات والكشوفات صار أسهل بكثير. التطبيق عملي ويدعم أكثر من لغة، وهذا ساعد العمالة عندنا تستخدمه بدون مشاكل.',
+      countryCode: 'SA'
+    },
+    {
+      name: 'أحمد – سائق نقل ركاب',
+      text: 'التطبيق بسيط وسهل جدًا، اشتغلت عليه من أول مرة. حلو إنه فيه عربي وإنجليزي، وكل البيانات واضحة ومترتبة.',
+      countryCode: 'EG'
+    },
+    {
+      name: 'حسام – مدير تشغيل',
+      text: 'كشف الركاب خلّى الشغل أسرع وأنظم. تسجيل الرحلات والكشف بياخد دقائق، وميزة اللغات المختلفة فرقت معنا جدًا.',
+      countryCode: 'EG'
+    },
+    {
+      name: 'محمد عمران – بس ڈرائیور',
+      text: 'یہ ایپ بہت آسان اور آرام دہ ہے۔ اردو اور انگلش دونوں زبانیں موجود ہیں، جس سے استعمال کرنا بہت سہل ہو گیا ہے۔',
+      countryCode: 'PK'
+    },
+    {
+      name: 'سلمان – Supervisor',
+      text: 'Passenger manifest app is very easy to use. Urdu language support helps drivers understand everything clearly without mistakes.',
+      countryCode: 'PK'
+    },
+    {
+      name: 'محمد إقبال – بس ڈرائیور',
+      text: 'یہ ایپ بہت آرام دہ اور استعمال میں آسان ہے۔ اردو اور انگلش زبان کی سہولت ہونے سے روز کا کام بہت آسان ہو گیا ہے۔',
+      countryCode: 'PK'
+    },
+    {
+      name: 'سلمان خان – Supervisor',
+      text: 'Passenger list app is very easy and clear. Urdu support is very helpful for Pakistani drivers and staff.',
+      countryCode: 'PK'
+    },
+    {
+      name: 'رحمن – ড্রাইভার',
+      text: 'এই অ্যাপটি খুবই সহজ এবং ব্যবহার করতে আরামদায়ক। ইংরেজি ভাষা সাপোর্ট থাকায় কাজ দ্রুত হয়।',
+      countryCode: 'BD'
+    },
+    {
+      name: 'عبدالله – Operations',
+      text: 'The app design is simple and comfortable. Drivers from different nationalities can use it easily.',
+      countryCode: 'BD'
+    },
+    {
+      name: 'راجو – Driver',
+      text: 'The app is very simple and comfortable. English language support makes my daily work fast and easy.',
+      countryCode: 'IN'
+    },
+    {
+      name: 'محمد علي – Operations',
+      text: 'Clear design, easy steps, and multiple languages. This app helped our team work smoothly without confusion.',
+      countryCode: 'IN'
+    },
+    {
+      name: 'Ajay – Driver',
+      text: 'The app is very comfortable and simple to use. English language support helps us completely.',
+      countryCode: 'IN'
+    },
+    {
+      name: 'Mohammed Rafi – Transport Supervisor',
+      text: 'Easy steps, clear system, and multi-language support. It makes daily passenger manifest work smooth.',
+      countryCode: 'IN'
     }
   ];
 
@@ -350,20 +462,20 @@ const Home = () => {
   );
 
   // Review card component
-  const ReviewCard = ({ name, text, isMobile, isTablet, isPortrait }) => {
+  const ReviewCard = ({ name, text, countryCode, isMobile, isTablet, isPortrait }) => {
     // Calculate card width based on orientation
     const cardWidth = isMobile 
       ? (isPortrait ? '180px' : '160px') // Smaller in landscape to fit more
       : isTablet 
-        ? 'calc(50% - 12px)' 
-        : '200px';
+        ? '200px' 
+        : '220px';
     
     return (
     <div
       style={{
-        flex: isMobile ? '0 0 auto' : '1',
+        flex: '0 0 auto',
         minWidth: cardWidth,
-        maxWidth: isMobile ? cardWidth : isTablet ? 'calc(50% - 12px)' : '280px',
+        maxWidth: cardWidth,
         padding: isMobile ? '10px' : '16px',
         display: 'flex',
         flexDirection: 'column',
@@ -373,8 +485,20 @@ const Home = () => {
       }}
     >
       <StarRating isMobile={isMobile} />
-      <h3 style={{ fontWeight: 'bold', fontSize: isMobile ? '11px' : '14px', color: '#000', margin: 0 }}>
-        {name}
+      <h3 style={{ fontWeight: 'bold', fontSize: isMobile ? '9px' : '12px', color: '#000', margin: 0, display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap', justifyContent: 'center', lineHeight: '1.3' }}>
+        {countryCode && (
+          <ReactCountryFlag
+            countryCode={countryCode}
+            svg
+            style={{
+              width: isMobile ? '14px' : '18px',
+              height: isMobile ? '10px' : '13px',
+              borderRadius: '2px',
+              flexShrink: 0
+            }}
+          />
+        )}
+        <span>{name}</span>
       </h3>
       <p style={{ 
         fontSize: isMobile ? '10px' : '12px', 
@@ -397,19 +521,17 @@ const Home = () => {
 
   return (
     <>
-      {isMobile && (
-        <style>
-          {`
-            .reviews-section::-webkit-scrollbar {
-              display: none;
-            }
-            .reviews-section {
-              -ms-overflow-style: none;
-              scrollbar-width: none;
-            }
-          `}
-        </style>
-      )}
+      <style>
+        {`
+          .reviews-section::-webkit-scrollbar {
+            display: none;
+          }
+          .reviews-section {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+        `}
+      </style>
       <div 
         className="w-full min-h-screen bg-white relative"
         style={{
@@ -708,7 +830,11 @@ const Home = () => {
                 flexDirection: 'column',
                 padding: isMobile ? '8px' : '12px',
                 justifyContent: 'center',
-                alignItems: 'center'
+                alignItems: 'center',
+                backgroundImage: 'url(/1.jpeg)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat'
               }}
             >
               {/* Speech Bubble - في المنتصف */}
@@ -746,7 +872,7 @@ const Home = () => {
                     lineHeight: '1.2'
                   }}
                 >
-                  أحمد سامى
+                  تجربة مستخدم حقيقية
                 </div>
                 {/* Message - تحت الاسم */}
                 <p
@@ -760,7 +886,12 @@ const Home = () => {
                     direction: 'rtl'
                   }}
                 >
-                  الخدمة ممتازة جدََا، أول ما يفتح التطبيق بلاقي عربية قريبة. والسواقين محترمين جدََا. بقى التطبيق الأساسي في مشاويري اليومية.
+                 
+  يتيح تطبيق <strong>كشف الركاب</strong> إصدار كشف الركاب خلال لحظات باستخدام <strong>الباركود المعتمد المتحرك</strong>، مع سهولة وسرعة التسجيل لأول مرة، وسلاسة كاملة في إدخال بيانات الركاب دون تعقيد.
+
+كما يوفر التطبيق <strong>دعم عملاء متواصل على مدار 24 ساعة / 7 أيام</strong>، مما يساعد شركات النقل والسائقين على <strong>الالتزام بالأنظمة والتعليمات الرسمية</strong>، والعمل بثقة وأمان في نقل الركاب بين المدن وداخلها.
+
+
                 </p>
                 {/* Speech bubble tail - يشير لأسفل */}
                 <div
@@ -811,7 +942,7 @@ const Home = () => {
           <h1
             style={{
               fontSize: isMobile 
-                ? (isPortrait ? '1.1rem' : '0.6rem') 
+                ? (isPortrait ? '0.6rem' : '0.4rem') 
                 : isIPadPro || isTablet
                   ? (isPortrait ? '2.2rem' : '1.4rem') 
                   : (isPortrait ? '3.2rem' : '2.4rem'),
@@ -827,15 +958,19 @@ const Home = () => {
                 : (isPortrait ? '0 0 24px 0' : '0 0 16px 0'),
               whiteSpace: isMobile ? 'normal' : 'normal',
               wordBreak: isMobile ? 'normal' : 'normal',
-              overflowWrap: isMobile ? 'break-word' : 'normal'
+              overflowWrap: isMobile ? 'break-word' : 'normal',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
             }}
-          >
-            وصّل مشاويرك بسهولة وامان   مع تطبيقنا 
-          </h1>
+          >            <FaCheckCircle style={{ fontSize: isMobile ? (isPortrait ? '0.6rem' : '0.4rem') : (isPortrait ? '2.2rem' : '1.4rem'), marginRight: '0' }} />
+ 
+
+ اشترك معنا وخلّي رحلاتك دائمًا نظامية وآمنة    </h1>
           <p
             style={{
               fontSize: isMobile 
-                ? (isPortrait ? '0.95rem' : '0.55rem') 
+                ? (isPortrait ? '0.7rem' : '0.4rem') 
                 : isIPadPro || isTablet
                   ? (isPortrait ? '1.15rem' : '0.75rem') 
                   : (isPortrait ? '1.4rem' : '1.1rem'),
@@ -850,18 +985,21 @@ const Home = () => {
                 : (isPortrait ? '0 0 32px 0' : '0 0 20px 0')
             }}
           >
-            احجز مشوارك خلال ثواني، وتتبع الرحلة لحظة بلحظة، واستمتع بأسعار مناسبة وجودة خدمة عالية.
+            اشترك في تطبيق كشف الركاب وخلّيك نظامي.
+            <br />
+            أصدر كشف ركاب معتمد بالباركود المتحرك مع تسجيل كامل تفاصيل الرحلة وقائمة الركاب،
+            لتفادي المخالفات الصادرة من وزارة النقل بكل سهولة وأمان.
           </p>
           <p
             style={{
               fontSize: isMobile 
-                ? (isPortrait ? '0.85rem' : '0.55rem') 
+                ? (isPortrait ? '0.75rem' : '0.45rem') 
                 : isIPadPro || isTablet
                   ? (isPortrait ? '1.05rem' : '0.75rem')
                   : (isPortrait ? '1rem' : '0.75rem'),
               color: 'white',
               marginBottom: isMobile 
-                ? (isPortrait ? '12px' : '8px') 
+                ? (isPortrait ? '8px' : '8px') 
                 : (isPortrait ? '24px' : '16px'),
               fontWeight: '500',
               textShadow: '0 1px 2px rgba(0,0,0,0.3)',
@@ -985,10 +1123,12 @@ const Home = () => {
 
       {/* Reviews Section - positioned right after green section */}
       <div
-        className={isMobile ? 'reviews-section' : ''}
+        className={isMobile ? 'reviews-section' : (isTablet || isIPadPro) ? 'reviews-section' : 'reviews-section'}
         style={{
           position: 'absolute',
-          top: isMobile ? 'calc(50vh + 60px)' : 'calc(50vh + 40px)',
+          top: isMobile 
+            ? (isiPhoneSE ? 'calc(50vh + 80px)' : 'calc(50vh + 60px)')
+            : 'calc(50vh + 40px)',
           left: isMobile ? '0' : isTablet ? '-24px' : '-40px',
           right: isMobile ? '0' : isTablet ? '-24px' : '-40px',
           width: isMobile ? '100%' : isTablet ? 'calc(100% + 48px)' : 'calc(100% + 80px)',
@@ -998,20 +1138,20 @@ const Home = () => {
           zIndex: 15,
           display: 'flex',
           gap: isMobile ? '8px' : '16px',
-          justifyContent: isMobile ? 'flex-start' : 'center',
+          justifyContent: isMobile ? 'flex-start' : 'flex-start',
           alignItems: 'flex-start',
-          flexWrap: isMobile ? 'nowrap' : 'wrap', // Keep side by side on mobile (both portrait and landscape)
-          overflowX: isMobile ? 'auto' : 'visible', // Allow horizontal scrolling on mobile
+          flexWrap: 'nowrap', // Keep side by side on all devices
+          overflowX: 'auto', // Allow horizontal scrolling on all devices
           overflowY: 'visible',
-          maxWidth: isMobile ? '100%' : 'none',
-          WebkitOverflowScrolling: isMobile ? 'touch' : 'auto',
+          maxWidth: '100%',
+          WebkitOverflowScrolling: 'touch',
           willChange: 'transform',
           transform: 'translateZ(0)',
           backfaceVisibility: 'hidden'
         }}
       >
         {reviews.map((review, index) => (
-          <ReviewCard key={index} name={review.name} text={review.text} isMobile={isMobile} isTablet={isTablet} isPortrait={isPortrait} />
+          <ReviewCard key={index} name={review.name} text={review.text} countryCode={review.countryCode} isMobile={isMobile} isTablet={isTablet} isPortrait={isPortrait} />
         ))}
       </div>
 
@@ -1020,7 +1160,9 @@ const Home = () => {
         className="absolute left-1/2 transform -translate-x-1/2 flex z-15" 
         style={{ 
           position: 'absolute',
-          top: isMobile ? 'calc(50vh + 280px)' : isTablet ? 'calc(50vh + 320px)' : 'calc(50vh + 290px)',
+          top: isMobile 
+            ? (isiPhoneSE ? 'calc(50vh + 320px)' : 'calc(50vh + 280px)')
+            : isTablet ? 'calc(50vh + 320px)' : 'calc(50vh + 290px)',
           gap: isMobile ? '8px' : '20px'
         }}
       >
@@ -1035,7 +1177,9 @@ const Home = () => {
       <div
         style={{
           position: 'absolute',
-          top: isMobile ? 'calc(50vh + 360px)' : 'calc(50vh + 340px)',
+          top: isMobile 
+            ? (isiPhoneSE ? 'calc(50vh + 360px)' : 'calc(50vh + 280px)')
+            : isTablet ? 'calc(50vh + 340px)' : 'calc(50vh + 280px)',
           left: isMobile ? '-16px' : isTablet ? '-24px' : '-40px',
           right: isMobile ? '-16px' : isTablet ? '-24px' : '-40px',
           width: isMobile ? 'calc(100% + 32px)' : isTablet ? 'calc(100% + 48px)' : 'calc(100% + 80px)',
@@ -1208,6 +1352,17 @@ const Home = () => {
               overflow: 'hidden'
             }}
           >
+            <img
+              src="/WhatsApp Image 2025-12-08 at 9.22.03 AM.jpeg"
+              alt="Phone Screen"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                borderRadius: '25px',
+                display: 'block'
+              }}
+            />
             {/* Thin Notch */}
             <div
               style={{
@@ -1383,6 +1538,17 @@ const Home = () => {
                 overflow: 'hidden'
               }}
             >
+              <img
+                src="/WhatsApp Image 2025-12-08 at 9.22.03 AM.jpeg"
+                alt="Phone Screen"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  borderRadius: '25px',
+                  display: 'block'
+                }}
+              />
               {/* Thin Notch */}
               <div
                 style={{
@@ -1436,7 +1602,7 @@ const Home = () => {
                   <h3 style={{ fontWeight: 'bold', fontSize: '16px', color: '#000', margin: 0 }}>
                     {feature.title}
                   </h3>
-                  <p style={{ fontSize: '13px', color: '#666', lineHeight: '1.6', margin: 0 }}>
+                  <p style={{ fontSize: '10px', color: '#666', lineHeight: '1.6', margin: 0 }}>
                     {feature.description}
                   </p>
                 </div>
@@ -1450,7 +1616,9 @@ const Home = () => {
       <div
         style={{
           position: 'absolute',
-          top: isMobile ? 'calc(50vh + 720px)' : isTablet ? 'calc(50vh + 820px)' : 'calc(50vh + 820px)',
+          top: isMobile 
+            ? (isiPhoneSE ? 'calc(50vh + 900px)' : 'calc(50vh + 720px)')
+            : isTablet ? 'calc(50vh + 820px)' : 'calc(50vh + 820px)',
           left: isMobile ? '-16px' : isTablet ? '-24px' : '-40px',
           right: isMobile ? '-16px' : isTablet ? '-24px' : '-40px',
           width: isMobile ? 'calc(100% + 32px)' : isTablet ? 'calc(100% + 48px)' : 'calc(100% + 80px)',
@@ -1553,6 +1721,11 @@ const Home = () => {
             }}
           >
             {phoneMockups.map((phone, index) => {
+              // Hide first image (1.jpeg) on mobile
+              if (isMobile && index === 0) {
+                return null;
+              }
+              
               // Calculate phone size based on device and orientation
               const getPhoneSize = () => {
                 if (isMobile) {
@@ -1644,6 +1817,12 @@ const Home = () => {
                     overflow: 'hidden'
                   }}
                 >
+<img
+        src={phone.image}
+        alt=""
+        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+      />
+
                   {/* Status Bar */}
                   <div
                     style={{
@@ -1785,7 +1964,9 @@ const Home = () => {
       <div
         style={{
           position: 'absolute',
-          top: isMobile ? 'calc(50vh + 1120px)' : isTablet ? 'calc(50vh + 1290px)' : 'calc(50vh + 1290px)',
+          top: isMobile 
+            ? (isiPhoneSE ? 'calc(50vh + 1250px)' : 'calc(50vh + 1120px)')
+            : isTablet ? 'calc(50vh + 1290px)' : 'calc(50vh + 1290px)',
           left: isMobile ? '-16px' : isTablet ? '-40px' : '-40px',
           right: isMobile ? '-16px' : isTablet ? '-40px' : '-40px',
           width: isMobile ? 'calc(100% + 32px)' : isTablet ? 'calc(100% + 80px)' : 'calc(100% + 80px)',
@@ -1848,7 +2029,7 @@ const Home = () => {
             whiteSpace: isMobile ? 'normal' : isTablet ? 'nowrap' : 'nowrap'
           }}
         >
-         . تطبيق نقل ذكي يسهل عليك مشاويرك اليومية بخدمة آمنة، سريعة، ومريحة في أي وقت
+         . تطبيق كشف ركاب إلكتروني معتمد بالباركود المتحرك وفق أنظمة وزارة النقل
         </p>
 
         {/* Contact Button - Oval */}
@@ -1887,11 +2068,17 @@ const Home = () => {
             gap: isMobile ? '12px' : '16px',
             alignItems: 'center',
             justifyContent: 'center',
-            marginTop: isMobile ? '16px' : '20px'
+            marginTop: isMobile ? '16px' : '20px',
+            pointerEvents: 'auto',
+            position: 'relative',
+            zIndex: 2000
           }}
         >
           {/* Facebook */}
-          <div
+          <a
+            href="https://www.facebook.com/share/1byo91GvPN/"
+            target="_blank"
+            rel="noopener noreferrer"
             style={{
               width: isMobile ? '28px' : '32px',
               height: isMobile ? '28px' : '32px',
@@ -1902,7 +2089,8 @@ const Home = () => {
               justifyContent: 'center',
               cursor: 'pointer',
               transition: 'all 0.3s ease',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)' // Shadow for better visibility
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+              textDecoration: 'none'
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'scale(1.1)';
@@ -1912,82 +2100,13 @@ const Home = () => {
             }}
           >
             <FiFacebook style={{ fontSize: '16px', color: '#000' }} />
-          </div>
-
-          {/* Email/Message */}
-          <div
-            style={{
-              width: isMobile ? '28px' : '32px',
-              height: isMobile ? '28px' : '32px',
-              backgroundColor: 'rgba(255, 255, 255, 0.55)',
-              borderRadius: '16px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)' // Shadow for better visibility
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.1)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-            }}
-          >
-            <HiOutlineMail style={{ fontSize: isMobile ? '14px' : '16px', color: '#000' }} />
-          </div>
-
-          {/* Location */}
-          <div
-            style={{
-              width: isMobile ? '28px' : '32px',
-              height: isMobile ? '28px' : '32px',
-              backgroundColor: 'rgba(255, 255, 255, 0.55)',
-              borderRadius: '16px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)' // Shadow for better visibility
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.1)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-            }}
-          >
-            <HiOutlineLocationMarker style={{ fontSize: isMobile ? '14px' : '16px', color: '#000' }} />
-          </div>
-
-          {/* Telegram */}
-          <div
-            style={{
-              width: isMobile ? '28px' : '32px',
-              height: isMobile ? '28px' : '32px',
-              backgroundColor: 'rgba(255, 255, 255, 0.55)',
-              borderRadius: '16px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)' // Shadow for better visibility
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.1)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-            }}
-          >
-            <PiTelegramLogoLight style={{ fontSize: isMobile ? '14px' : '16px', color: '#000' }} />
-          </div>
+          </a>
 
           {/* Instagram */}
-          <div
+          <a
+            href="https://www.instagram.com/kashfalrukaab?utm_source=qr&igsh=MW9nOTNzYmtkbnRudQ=="
+            target="_blank"
+            rel="noopener noreferrer"
             style={{
               width: isMobile ? '28px' : '32px',
               height: isMobile ? '28px' : '32px',
@@ -1998,7 +2117,8 @@ const Home = () => {
               justifyContent: 'center',
               cursor: 'pointer',
               transition: 'all 0.3s ease',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)' // Shadow for better visibility
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+              textDecoration: 'none'
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'scale(1.1)';
@@ -2008,7 +2128,63 @@ const Home = () => {
             }}
           >
             <BiLogoInstagram style={{ fontSize: isMobile ? '14px' : '16px', color: '#000' }} />
-          </div>
+          </a>
+
+          {/* TikTok */}
+          <a
+            href="https://www.tiktok.com/@.kashfalrukaab?_r=1&_t=ZS-9238ZERO2CX"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              width: isMobile ? '28px' : '32px',
+              height: isMobile ? '28px' : '32px',
+              backgroundColor: 'rgba(255, 255, 255, 0.55)',
+              borderRadius: '16px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+              textDecoration: 'none'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'scale(1.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'scale(1)';
+            }}
+          >
+            <FaTiktok style={{ fontSize: isMobile ? '14px' : '16px', color: '#000' }} />
+          </a>
+
+          {/* Snapchat */}
+          <a
+            href="https://www.snapchat.com/add/kashfalrukaab?share_id=LSm2j3461g8&locale=ar-EG"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              width: isMobile ? '28px' : '32px',
+              height: isMobile ? '28px' : '32px',
+              backgroundColor: 'rgba(255, 255, 255, 0.55)',
+              borderRadius: '16px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+              textDecoration: 'none'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'scale(1.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'scale(1)';
+            }}
+          >
+            <FaSnapchat style={{ fontSize: isMobile ? '14px' : '16px', color: '#000' }} />
+          </a>
         </div>
       </div>
 
@@ -2017,7 +2193,7 @@ const Home = () => {
         style={{
           position: 'absolute',
           top: isMobile 
-            ? 'calc(50vh + 1350px - 120px)' 
+            ? (isiPhoneSE ? 'calc(50vh + 1450px - 120px)' : 'calc(50vh + 1350px - 120px)')
             : isTablet 
               ? 'calc(50vh + 1200px + 500px - 120px)' 
               : 'calc(50vh + 1200px + 500px - 120px)',
@@ -2029,7 +2205,8 @@ const Home = () => {
           zIndex: 15,
           display: 'flex',
           justifyContent: 'center',
-          alignItems: 'center'
+          alignItems: 'center',
+          pointerEvents: 'none'
         }}
       >
         <div
