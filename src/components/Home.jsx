@@ -329,8 +329,7 @@ const Home = () => {
     {
       title: 'اصدر رحلتك ف لحظات مع البركود المعتمد ',
       description: `
-سجّل بيانات الركاب بسرعة مع تطبيق كشف الركاب، واستفد من ميزة جلب البيانات بالكاميرا أو الصور من الاستديو.
-أصدر رحلتك بسرعة ودقة، مع إمكانية إضافة البيانات يدويًا، لتتمكن من تسجيل بيانات الركاب بأي طريقة تناسبك، وكل شيء منظم بدون أخذ وقت إضافي.`,
+سجّل بيانات الركاب بسرعة عبر الكاميرا أو الصور أو الإدخال اليدوي، ونظّم رحلتك بدقة وسهولة بدون إضاعة وقت`,
 
       icon: FaCar,
       side: 'left',
@@ -1821,99 +1820,6 @@ const Home = () => {
         alt=""
         style={{ width: "100%", height: "100%", objectFit: "cover" }}
       />
-
-                  {/* Status Bar */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: isMobile ? '10px' : '0',
-                      left: '0',
-                      right: '0',
-                      height: '24px',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      padding: '0 12px',
-                      zIndex: 15,
-                      backgroundColor: 'transparent'
-                    }}
-                  >
-                    {/* Left side - Time */}
-                    <div
-                      style={{
-                        fontSize: '11px',
-                        fontWeight: '600',
-                        color: '#000',
-                        fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif'
-                      }}
-                    >
-                      9:41
-                    </div>
-                    
-                    {/* Right side - Signal, WiFi, Battery */}
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px'
-                      }}
-                    >
-                      {/* Signal bars */}
-                      <div style={{ display: 'flex', alignItems: 'flex-end', gap: '1px', height: '10px' }}>
-                        <div style={{ width: '2px', height: '4px', backgroundColor: '#000', borderRadius: '0.5px' }}></div>
-                        <div style={{ width: '2px', height: '6px', backgroundColor: '#000', borderRadius: '0.5px' }}></div>
-                        <div style={{ width: '2px', height: '8px', backgroundColor: '#000', borderRadius: '0.5px' }}></div>
-                        <div style={{ width: '2px', height: '10px', backgroundColor: '#000', borderRadius: '0.5px' }}></div>
-                      </div>
-                      
-                      {/* WiFi icon */}
-                      <div style={{ width: '12px', height: '10px', position: 'relative' }}>
-                        <svg width="12" height="10" viewBox="0 0 12 10" fill="none" style={{ position: 'absolute', top: 0, left: 0 }}>
-                          <path d="M6 0C3.5 0 1.5 1.5 0 3L6 9L12 3C10.5 1.5 8.5 0 6 0Z" fill="#000"/>
-                          <path d="M6 3C4.5 3 3.5 4 3 5L6 8L9 5C8.5 4 7.5 3 6 3Z" fill="#000"/>
-                          <circle cx="6" cy="6" r="1" fill="#000"/>
-                        </svg>
-                      </div>
-                      
-                      {/* Battery icon */}
-                      <div style={{ width: '18px', height: '10px', position: 'relative' }}>
-                        <div
-                          style={{
-                            width: '16px',
-                            height: '8px',
-                            border: 'none',
-                            borderRadius: '1px',
-                            position: 'absolute',
-                            top: '1px',
-                            left: '0'
-                          }}
-                        >
-                          <div
-                            style={{
-                              width: '12px',
-                              height: '6px',
-                              backgroundColor: '#000',
-                              borderRadius: '0.5px',
-                              position: 'absolute',
-                              top: '0.5px',
-                              left: '0.5px'
-                            }}
-                          />
-                        </div>
-                        <div
-                          style={{
-                            width: '1px',
-                            height: '4px',
-                            backgroundColor: '#000',
-                            borderRadius: '0 1px 1px 0',
-                            position: 'absolute',
-                            top: '3px',
-                            right: '0'
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </div>
                   
                 </div>
               </div>
