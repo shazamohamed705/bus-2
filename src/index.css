@@ -31,4 +31,22 @@
     width: 100%;
     min-height: 100vh;
   }
+  
+  /* RTL Support */
+  [dir="rtl"] {
+    direction: rtl;
+  }
+  
+  [dir="ltr"] {
+    direction: ltr;
+  }
+  
+  /* RTL text alignment */
+  [dir="rtl"] * {
+    text-align: inherit;
+  }
+  
+  [dir="ltr"] * {
+    text-align: inherit;
+  }
 }

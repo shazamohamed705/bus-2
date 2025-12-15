@@ -5,12 +5,65 @@ import { FiFacebook } from 'react-icons/fi';
 import { PiTelegramLogoLight, PiGithubLogo } from 'react-icons/pi';
 import { BiLogoInstagram } from 'react-icons/bi';
 import ReactCountryFlag from 'react-country-flag';
+import WhatsAppButton from './WhatsAppButton';
+import LanguageSwitcher from './LanguageSwitcher';
+import { useLanguage } from '../contexts/LanguageContext';
+import { translations } from '../translations';
+import { fetchSections } from '../services/api';
 // Import images - adjust paths based on your assets folder location
 // import googlePlay from '../assets/googleplay.png';
 // import appstore from '../assets/appstore.jpg';
 // import huawei from '../assets/huawel.webp';
 
 const Home = () => {
+  const { language } = useLanguage();
+  const t = translations[language] || translations.ar;
+  const isRTL = language === 'ar' || language === 'ur';
+  
+  // API Data State
+  const [sectionsData, setSectionsData] = useState(null);
+  const [reviewsData, setReviewsData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  // Fetch data from API
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetchSections();
+        if (response.success && response.data) {
+          setSectionsData(response.data.sections || []);
+          setReviewsData(response.data.reviews || []);
+        }
+      } catch (error) {
+        console.error('Error loading data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadData();
+  }, []);
+  
+  // Helper function to get section by prefix_name
+  const getSectionByPrefix = (prefix) => {
+    if (!sectionsData) return null;
+    return sectionsData.find(section => section.prefix_name === prefix);
+  };
+  
+  // Helper function to get translated text from API
+  const getTranslatedText = (textObj) => {
+    if (!textObj) return '';
+    
+    // Check if the requested language exists
+    if (textObj[language]) {
+      return textObj[language];
+    }
+    
+    // Fallback chain: Arabic -> English -> empty
+    return textObj.ar || textObj.en || '';
+  };
+  
   // Responsive state - use both width and height for better rotation handling
   const getResponsiveState = () => {
     const width = window.innerWidth;
@@ -280,18 +333,30 @@ const Home = () => {
   // Carousel state
   const [currentSlide, setCurrentSlide] = useState(0);
   
-  // Phone mockups for carousel
-  const phoneMockups = [
-    { image: "/1.jpeg" },
-    { image: "/9.jpeg" },
-    { image: "/8.jpeg" },
-    { image: "/2.jpeg" },
-    { image: "/3.jpeg" },
-    { image: "/4.jpeg" },
-    { image: "/5.jpeg" },
-    { image: "/6.jpeg" },
-    { image: "/7.jpeg" },
-  ];
+  // Get sections from API (must be before phoneMockups)
+  const firstSection = getSectionByPrefix('first-section');
+  const secondSection = getSectionByPrefix('second-section');
+  const thirdSection = getSectionByPrefix('third-section');
+  const fourthSection = getSectionByPrefix('fourth-section');
+  
+  // Phone mockups for carousel from API or fallback
+  const phoneMockups = useMemo(() => {
+    if (thirdSection && thirdSection.images && thirdSection.images.length > 0) {
+      return thirdSection.images.map(imageUrl => ({ image: imageUrl }));
+    }
+    // Fallback to default images
+    return [
+      { image: "/1.jpeg" },
+      { image: "/9.jpeg" },
+      { image: "/8.jpeg" },
+      { image: "/2.jpeg" },
+      { image: "/3.jpeg" },
+      { image: "/4.jpeg" },
+      { image: "/5.jpeg" },
+      { image: "/6.jpeg" },
+      { image: "/7.jpeg" },
+    ];
+  }, [thirdSection]);
     
   // Calculate max slide based on visible phones (responsive)
   const phonesPerView = isMobile ? 1 : isTablet ? 2 : 3;
@@ -313,155 +378,155 @@ const Home = () => {
       return Math.min(calculatedMax, prev + 2); // Move 2 steps at a time
     });
   };
-
   
-
-  // Features data
-  const features = [
-    {
-      title: 'طرق دفع مرنة تناسبك مع الباقات المميزة للاشتراك في تطبيق كشف الركاب.',
-      description: `  
-    يمكنك الدفع بأي وسيلة متاحة لأصحاب الباصات والحافلات: كاش، فيزا، أو تحويل بنكي، لتسهيل إدارة رحلاتك بكل راحة`,
-      icon: FaWallet,
-      side: 'left',
-      position: 'top'
-    },
-    {
-      title: 'اصدر رحلتك ف لحظات مع البركود المعتمد ',
-      description: `
-سجّل بيانات الركاب بسرعة عبر الكاميرا أو الصور أو الإدخال اليدوي، ونظّم رحلتك بدقة وسهولة بدون إضاعة وقت`,
-
-      icon: FaCar,
-      side: 'left',
-      position: 'bottom'
-    },
-    {
-      title: 'مع تطبيق كشف الركاب ',
-      description: `يوفر إصدار كشف الركاب بسرعة وسهولة، مع ضمان مطابقة بيانات جميع الركاب لمواصفات وزارة النقل.
-حل إلكتروني آمن يساعد السائق وأصحاب المؤسسات على تنظيم الرحلات وتفادي المخالفات، لتبقى رحلتك دائمًا في أمان.
-`,
-      icon: FaMapMarkerAlt,
-      side: 'right',
-      position: 'top'
-    },
-    {
-      title: 'أمان وثقة في كل رحلة صادرة من تطبيق كشف الركاب',
-      description: `كل رحلة معتمدة، كل سائق موثوق.
-    مع نظام مراجعة الهوية والتقييم المستمر، نحرص على توفير نقل آمن ومريح لجميع الركاب.
-    
-    رحلتك آمنة… وسائقك موثوق.`,
-      icon: FaShieldAlt,
-      side: 'right',
-      position: 'bottom'
+  // Hero section data from API
+  const heroData = useMemo(() => {
+    if (firstSection) {
+      return {
+        title: getTranslatedText(firstSection.title),
+        subtitle: getTranslatedText(firstSection.description)?.split('\n')[0] || '',
+        description: getTranslatedText(firstSection.description),
+        googleLink: firstSection.content?.google_link || 'https://play.google.com/store',
+        appleLink: firstSection.content?.apple_link || 'https://apps.apple.com/',
+        hawaiiLink: firstSection.content?.hawaii_link || ''
+      };
     }
-    
-  ];
-
-  // Reviews data
-  const reviews = [
-    {
-      name: 'أبو خالد – صاحب مؤسسة نقل',
-      text: 'تطبيق كشف الركاب وفر علينا وقت وجهد كبير. الكشوفات تطلع خلال دقائق وبشكل نظامي ومعتمد، وارتحت من المخالفات والتفتيش.',
-      countryCode: ''
-    },
-    {
-      name: 'سالم – سائق حافلة بين المدن',
-      text: 'التطبيق سهل جدًا، استخدمته من أول يوم بدون أي تعقيد. تسجيل الرحلة والركاب واضح، والباركود يخليك مطمن في أي نقطة تفتيش.',
-      countryCode: ''
-    },
-    {
-      name: 'محمد – مشرف تشغيل',
-      text: 'كنا نكتب الكشوفات يدوي، الآن كل شيء إلكتروني ومحفوظ. تفاصيل الرحلة والركاب متسجلة بدقة، وفر علينا أخطاء كثيرة.',
-      countryCode: ''
-    },
-    {
-      name: 'أبو فيصل – مالك أسطول نقل',
-      text: 'أفضل ميزة في تطبيق كشف الركاب إنه يساعدنا نكون ملتزمين بتعليمات وزارة النقل، وسهولة المتابعة خلّت الإدارة أسهل بكثير.',
-      countryCode: 'SA'
-    },
-    {
-      name: 'أبو ناصر – صاحب حافلة نقل',
-      text: 'تطبيق كشف الركاب مريح جدًا وواضح، اللغة العربية ممتازة وما فيه أي تعقيد. أنصح فيه كل سائق يبي يشتغل وهو مرتاح ونظامي.',
-      countryCode: 'SA'
-    },
-    {
-      name: 'فهد – مشرف أسطول',
-      text: 'التحكم في الرحلات والكشوفات صار أسهل بكثير. التطبيق عملي ويدعم أكثر من لغة، وهذا ساعد العمالة عندنا تستخدمه بدون مشاكل.',
-      countryCode: 'SA'
-    },
-    {
-      name: 'أحمد – سائق نقل ركاب',
-      text: 'التطبيق بسيط وسهل جدًا، اشتغلت عليه من أول مرة. حلو إنه فيه عربي وإنجليزي، وكل البيانات واضحة ومترتبة.',
-      countryCode: 'EG'
-    },
-    {
-      name: 'حسام – مدير تشغيل',
-      text: 'كشف الركاب خلّى الشغل أسرع وأنظم. تسجيل الرحلات والكشف بياخد دقائق، وميزة اللغات المختلفة فرقت معنا جدًا.',
-      countryCode: 'EG'
-    },
-    {
-      name: 'محمد عمران – بس ڈرائیور',
-      text: 'یہ ایپ بہت آسان اور آرام دہ ہے۔ اردو اور انگلش دونوں زبانیں موجود ہیں، جس سے استعمال کرنا بہت سہل ہو گیا ہے۔',
-      countryCode: 'PK'
-    },
-    {
-      name: 'سلمان – Supervisor',
-      text: 'Passenger manifest app is very easy to use. Urdu language support helps drivers understand everything clearly without mistakes.',
-      countryCode: 'PK'
-    },
-    {
-      name: 'محمد إقبال – بس ڈرائیور',
-      text: 'یہ ایپ بہت آرام دہ اور استعمال میں آسان ہے۔ اردو اور انگلش زبان کی سہولت ہونے سے روز کا کام بہت آسان ہو گیا ہے۔',
-      countryCode: 'PK'
-    },
-    {
-      name: 'سلمان خان – Supervisor',
-      text: 'Passenger list app is very easy and clear. Urdu support is very helpful for Pakistani drivers and staff.',
-      countryCode: 'PK'
-    },
-    {
-      name: 'رحمن – ড্রাইভার',
-      text: 'এই অ্যাপটি খুবই সহজ এবং ব্যবহার করতে আরামদায়ক। ইংরেজি ভাষা সাপোর্ট থাকায় কাজ দ্রুত হয়।',
-      countryCode: 'BD'
-    },
-    {
-      name: 'عبدالله – Operations',
-      text: 'The app design is simple and comfortable. Drivers from different nationalities can use it easily.',
-      countryCode: 'BD'
-    },
-    {
-      name: 'راجو – Driver',
-      text: 'The app is very simple and comfortable. English language support makes my daily work fast and easy.',
-      countryCode: 'IN'
-    },
-    {
-      name: 'محمد علي – Operations',
-      text: 'Clear design, easy steps, and multiple languages. This app helped our team work smoothly without confusion.',
-      countryCode: 'IN'
-    },
-    {
-      name: 'Ajay – Driver',
-      text: 'The app is very comfortable and simple to use. English language support helps us completely.',
-      countryCode: 'IN'
-    },
-    {
-      name: 'Mohammed Rafi – Transport Supervisor',
-      text: 'Easy steps, clear system, and multi-language support. It makes daily passenger manifest work smooth.',
-      countryCode: 'IN'
+    return {
+      title: '',
+      subtitle: '',
+      description: '',
+      googleLink: 'https://play.google.com/store',
+      appleLink: 'https://apps.apple.com/',
+      hawaiiLink: ''
+    };
+  }, [firstSection, language]);
+  
+  // Footer data from API
+  const footerData = useMemo(() => {
+    if (fourthSection) {
+      return {
+        description: getTranslatedText(fourthSection.title),
+        facebookLink: fourthSection.content?.facebook_link || 'https://www.facebook.com/share/1byo91GvPN/',
+        instagramLink: fourthSection.content?.instagram_link || 'https://www.instagram.com/kashfalrukaab?utm_source=qr&igsh=MW9nOTNzYmtkbnRudQ==',
+        snapchatLink: fourthSection.content?.snapchat_link || 'https://www.snapchat.com/add/kashfalrukaab?share_id=LSm2j3461g8&locale=ar-EG',
+        tiktokLink: fourthSection.content?.tiktok_link || 'https://www.tiktok.com/@.kashfalrukaab?_r=1&_t=ZS-9238ZERO2CX',
+        whatsappLink: fourthSection.content?.whatsapp_link || ''
+      };
     }
-  ];
+    return {
+      description: '',
+      facebookLink: 'https://www.facebook.com/share/1byo91GvPN/',
+      instagramLink: 'https://www.instagram.com/kashfalrukaab?utm_source=qr&igsh=MW9nOTNzYmtkbnRudQ==',
+      snapchatLink: 'https://www.snapchat.com/add/kashfalrukaab?share_id=LSm2j3461g8&locale=ar-EG',
+      tiktokLink: 'https://www.tiktok.com/@.kashfalrukaab?_r=1&_t=ZS-9238ZERO2CX',
+      whatsappLink: ''
+    };
+  }, [fourthSection, language]);
+  
+  // Features data from API
+  const features = useMemo(() => {
+    if (secondSection && secondSection.content) {
+      const content = secondSection.content;
+      return [
+        {
+          title: getTranslatedText(content['payment-info']?.title),
+          description: getTranslatedText(content['payment-info']?.description),
+          icon: FaWallet,
+          side: 'left',
+          position: 'top'
+        },
+        {
+          title: getTranslatedText(content['car-info']?.title),
+          description: getTranslatedText(content['car-info']?.description),
+          icon: FaCar,
+          side: 'left',
+          position: 'bottom'
+        },
+        {
+          title: getTranslatedText(content['map-info']?.title),
+          description: getTranslatedText(content['map-info']?.description),
+          icon: FaMapMarkerAlt,
+          side: 'right',
+          position: 'top'
+        },
+        {
+          title: getTranslatedText(content['security-info']?.title),
+          description: getTranslatedText(content['security-info']?.description),
+          icon: FaShieldAlt,
+          side: 'right',
+          position: 'bottom'
+        }
+      ];
+    }
+    // Return empty features if no data from API
+    return [
+      {
+        title: '',
+        description: '',
+        icon: FaWallet,
+        side: 'left',
+        position: 'top'
+      },
+      {
+        title: '',
+        description: '',
+        icon: FaCar,
+        side: 'left',
+        position: 'bottom'
+      },
+      {
+        title: '',
+        description: '',
+        icon: FaMapMarkerAlt,
+        side: 'right',
+        position: 'top'
+      },
+      {
+        title: '',
+        description: '',
+        icon: FaShieldAlt,
+        side: 'right',
+        position: 'bottom'
+      }
+    ];
+  }, [secondSection, language]);
 
-  // Star rating component
-  const StarRating = ({ isMobile }) => (
-    <div style={{ display: 'flex', gap: isMobile ? '1px' : '2px', alignItems: 'center' }}>
-      {[...Array(5)].map((_, i) => (
-        <span key={i} style={{ color: '#FFD700', fontSize: isMobile ? '10px' : '12px' }}>★</span>
-      ))}
-    </div>
-  );
+  // Reviews data from API
+  const reviews = useMemo(() => {
+    if (reviewsData && reviewsData.length > 0) {
+      return reviewsData.map(review => ({
+        name: review.customer_name || '',
+        text: review.customer_comment || '',
+        countryCode: review.country_code || '',
+        rating: review.customer_rate || 5
+      }));
+    }
+    // Return empty array if no data from API
+    return [];
+  }, [reviewsData]);
+
+  // Star rating component - displays stars based on rating value
+  const StarRating = ({ isMobile, rating = 5 }) => {
+    const ratingValue = Math.min(Math.max(parseInt(rating) || 5, 0), 5); // Ensure rating is between 0 and 5
+    return (
+      <div style={{ display: 'flex', gap: isMobile ? '1px' : '2px', alignItems: 'center' }}>
+        {[...Array(5)].map((_, i) => (
+          <span 
+            key={i} 
+            style={{ 
+              color: i < ratingValue ? '#FFD700' : '#E0E0E0', 
+              fontSize: isMobile ? '10px' : '12px' 
+            }}
+          >
+            ★
+          </span>
+        ))}
+      </div>
+    );
+  };
 
   // Review card component
-  const ReviewCard = ({ name, text, countryCode, isMobile, isTablet, isPortrait }) => {
+  const ReviewCard = ({ name, text, countryCode, rating, isMobile, isTablet, isPortrait }) => {
     // Calculate card width based on orientation
     const cardWidth = isMobile 
       ? (isPortrait ? '180px' : '160px') // Smaller in landscape to fit more
@@ -483,7 +548,7 @@ const Home = () => {
         textAlign: 'center'
       }}
     >
-      <StarRating isMobile={isMobile} />
+      <StarRating isMobile={isMobile} rating={rating} />
       <h3 style={{ fontWeight: 'bold', fontSize: isMobile ? '9px' : '12px', color: '#000', margin: 0, display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap', justifyContent: 'center', lineHeight: '1.3' }}>
         {countryCode && (
           <ReactCountryFlag
@@ -563,9 +628,9 @@ const Home = () => {
           backfaceVisibility: 'hidden'
         }}
       >
-      {/* Logo */}
+      {/* Logo - opposite side of text */}
       <div 
-        className="absolute top-8 left-8 z-30"
+        className="absolute top-8 z-30"
         style={{
           zIndex: 30,
           top: isMobile 
@@ -573,7 +638,8 @@ const Home = () => {
             : isTablet 
               ? (isPortrait ? '50px' : '25px') 
               : (isPortrait ? '32px' : '25px'),
-          left: isMobile 
+          // Logo always opposite to text: RTL (text right) -> logo left, LTR (text left) -> logo right
+          [isRTL ? 'left' : 'right']: isMobile 
             ? (isPortrait ? '16px' : '10px') 
             : isTablet 
               ? (isPortrait ? '50px' : '25px') 
@@ -757,12 +823,13 @@ const Home = () => {
           />
           )}
 
-        {/* Phone mockup on green section - left side */}
+        {/* Phone mockup on green section - opposite side of text */}
         <div 
           className={isMobile ? '' : 'absolute'}
           style={{
             position: isMobile ? 'relative' : 'absolute',
-            left: isMobile 
+            // Phone always opposite to text: RTL (text right) -> phone left, LTR (text left) -> phone right
+            [isRTL ? 'left' : 'right']: isMobile 
               ? 'auto' 
               : isIPadPro 
                 ? (isPortrait ? '60px' : '30px') 
@@ -770,17 +837,17 @@ const Home = () => {
                   ? (isPortrait ? '50px' : '20px') 
                   : (isPortrait ? '250px' : '220px'),
             top: isMobile ? 'auto' : '60%',
-            transform: isMobile ? 'translateX(15px)' : 'translateY(calc(-50% - 20px))',
+            transform: isMobile ? (isRTL ? 'translateX(15px)' : 'translateX(-15px)') : 'translateY(calc(-50% - 20px))',
             zIndex: 25,
             width: isMobile 
-              ? (isPortrait ? '130px' : '80px') 
+              ? (isPortrait ? '160px' : '100px') 
               : isIPadPro 
-                ? (isPortrait ? '180px' : '120px') 
+                ? (isPortrait ? '220px' : '150px') 
                 : isTablet 
-                  ? (isPortrait ? '160px' : '110px') 
-                  : '180px',
+                  ? (isPortrait ? '200px' : '140px') 
+                  : '220px',
             height: 'auto',
-            marginRight: isMobile 
+            [isRTL ? 'marginRight' : 'marginLeft']: isMobile 
               ? (isPortrait ? '20px' : '10px') 
               : '0',
             marginTop: isMobile ? '0' : '0',
@@ -794,19 +861,19 @@ const Home = () => {
             style={{
               width: '100%',
               maxWidth: isMobile 
-                ? (isPortrait ? '130px' : '80px') 
+                ? (isPortrait ? '160px' : '100px') 
                 : isIPadPro 
-                  ? (isPortrait ? '180px' : '120px') 
+                  ? (isPortrait ? '220px' : '150px') 
                   : isTablet 
-                    ? (isPortrait ? '160px' : '110px') 
-                    : '180px',
+                    ? (isPortrait ? '200px' : '140px') 
+                    : '220px',
               height: isMobile 
-                ? (isPortrait ? '260px' : '160px') 
+                ? (isPortrait ? '320px' : '200px') 
                 : isIPadPro 
-                  ? (isPortrait ? '360px' : '240px') 
+                  ? (isPortrait ? '440px' : '300px') 
                   : isTablet 
-                    ? (isPortrait ? '320px' : '220px') 
-                    : '360px',
+                    ? (isPortrait ? '400px' : '280px') 
+                    : '440px',
               backgroundColor: 'rgba(205, 179, 179, 0.3)',
               borderRadius: '15px',
               padding: '0',
@@ -829,83 +896,22 @@ const Home = () => {
                 flexDirection: 'column',
                 padding: isMobile ? '8px' : '12px',
                 justifyContent: 'center',
-                alignItems: 'center',
-                backgroundImage: 'url(/1.jpeg)',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat'
+                alignItems: 'center'
               }}
             >
-              {/* Speech Bubble - في المنتصف */}
-              <div
+              <img
+                src="/WhatsApp Image 2025-12-08 at 9.22.03 AM.jpeg"
+                alt="Phone Screen"
                 style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  borderRadius: '11px',
                   position: 'absolute',
-                  top: '50%',
-                  left: isMobile ? '4px' : '6px',
-                  right: isMobile ? 'auto' : 'auto',
-                  transform: 'translateY(-50%)',
-                  backgroundColor: '#ffffff',
-                  borderRadius: '6px',
-                  padding: isMobile ? '10px 14px' : '12px 16px',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-                  zIndex: 10,
-                  width: isMobile ? 'calc(100% - 8px)' : 'calc(100% - 12px)',
-                  maxWidth: isMobile ? 'calc(100% - 8px)' : 'calc(100% - 12px)',
-                  minHeight: isMobile ? '60px' : '70px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: isMobile ? '4px' : '6px',
-                  boxSizing: 'border-box'
+                  top: 0,
+                  left: 0
                 }}
-              >
-                {/* Name - في الأعلى */}
-                <div
-                  style={{
-                    fontSize: isMobile ? '8px' : '10px',
-                    color: '#333',
-                    fontWeight: 'bold',
-                    fontFamily: 'Tajawal, sans-serif',
-                    textAlign: 'right',
-                    direction: 'rtl',
-                    margin: 0,
-                    lineHeight: '1.2'
-                  }}
-                >
-                  تجربة مستخدم حقيقية
-                </div>
-                {/* Message - تحت الاسم */}
-                <p
-                  style={{
-                    fontSize: isMobile ? '7px' : '9px',
-                    color: '#333',
-                    margin: 0,
-                    lineHeight: '1.4',
-                    fontFamily: 'Tajawal, sans-serif',
-                    textAlign: 'right',
-                    direction: 'rtl'
-                  }}
-                >
-                 
-  يتيح تطبيق <strong>كشف الركاب</strong> إصدار كشف الركاب خلال لحظات باستخدام <strong>الباركود المعتمد المتحرك</strong>، مع سهولة وسرعة التسجيل لأول مرة، وسلاسة كاملة في إدخال بيانات الركاب دون تعقيد.
-
-كما يوفر التطبيق <strong>دعم عملاء متواصل على مدار 24 ساعة / 7 أيام</strong>، مما يساعد شركات النقل والسائقين على <strong>الالتزام بالأنظمة والتعليمات الرسمية</strong>، والعمل بثقة وأمان في نقل الركاب بين المدن وداخلها.
-
-
-                </p>
-                {/* Speech bubble tail - يشير لأسفل */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    bottom: '-8px',
-                    left: isMobile ? '15px' : '20px',
-                    width: 0,
-                    height: 0,
-                    borderLeft: '8px solid transparent',
-                    borderRight: '8px solid transparent',
-                    borderTop: '8px solid #ffffff'
-                  }}
-                />
-              </div>
+              />
             </div>
           </div>
         </div>
@@ -915,8 +921,8 @@ const Home = () => {
           style={{
             position: isMobile ? 'relative' : 'absolute',
             top: isMobile ? 'auto' : isTablet ? '55%' : '50%',
-            right: isMobile ? 'auto' : isTablet ? '24px' : '100px',
-            left: isMobile ? 'auto' : 'auto',
+            [isRTL ? 'right' : 'left']: isMobile ? 'auto' : isTablet ? '24px' : '100px',
+            [isRTL ? 'left' : 'right']: isMobile ? 'auto' : 'auto',
             transform: isMobile ? 'none' : 'translateY(calc(-50% - 30px))',
             zIndex: 30,
             maxWidth: isMobile 
@@ -930,11 +936,11 @@ const Home = () => {
             marginTop: isMobile 
               ? (isPortrait ? '-20px' : '-15px') 
               : isTablet ? '20px' : '0',
-            textAlign: isMobile ? 'right' : 'right',
+            textAlign: isRTL ? 'right' : 'left',
             display: isMobile ? 'flex' : 'block',
             flexDirection: isMobile ? 'column' : 'row',
-            alignItems: isMobile ? 'flex-start' : 'flex-start',
-            justifyContent: isMobile ? 'center' : 'flex-start',
+            alignItems: isMobile ? (isRTL ? 'flex-start' : 'flex-end') : (isRTL ? 'flex-start' : 'flex-end'),
+            justifyContent: isMobile ? 'center' : (isRTL ? 'flex-start' : 'flex-end'),
             overflow: isMobile ? 'visible' : 'visible'
           }}
         >
@@ -963,7 +969,7 @@ const Home = () => {
               gap: '6px'
             }}
           >
-            اشترك معنا وخلّي رحلاتك دائمًا نظامية وآمنة
+            {heroData.title}
           </h1>
           <p
             style={{
@@ -980,13 +986,11 @@ const Home = () => {
               textShadow: '0 1px 2px rgba(0,0,0,0.3)',
               margin: isMobile 
                 ? (isPortrait ? '0 0 16px 0' : '0 0 10px 0') 
-                : (isPortrait ? '0 0 32px 0' : '0 0 20px 0')
+                : (isPortrait ? '0 0 32px 0' : '0 0 20px 0'),
+              whiteSpace: 'pre-line'
             }}
           >
-            اشترك في تطبيق كشف الركاب وخلّيك نظامي.
-            <br />
-            أصدر كشف ركاب معتمد بالباركود المتحرك مع تسجيل كامل تفاصيل الرحلة وقائمة الركاب،
-            لتفادي المخالفات الصادرة من وزارة النقل بكل سهولة وأمان.
+            {heroData.description}
           </p>
           <p
             style={{
@@ -1004,24 +1008,25 @@ const Home = () => {
               margin: isMobile 
                 ? (isPortrait ? '0 0 12px 0' : '0 0 8px 0') 
                 : (isPortrait ? '0 0 24px 0' : '0 0 16px 0'),
-              textAlign: isMobile ? 'right' : 'right',
-              alignSelf: isMobile ? 'flex-end' : 'auto'
+            textAlign: isRTL ? 'right' : 'left',
+            alignSelf: isMobile ? (isRTL ? 'flex-end' : 'flex-start') : 'auto'
             }}
           >
-            قم بتنزيل تطبيقنا
+            {t.downloadText}
           </p>
           <div style={{ 
             display: 'flex', 
+            flexDirection: isRTL ? 'row-reverse' : 'row',
             gap: isMobile 
               ? (isPortrait ? '6px' : '4px') 
               : (isPortrait ? '12px' : '8px'), 
             flexWrap: isTablet ? 'wrap' : 'nowrap', 
             alignItems: 'center',
-            justifyContent: isMobile ? 'flex-end' : 'flex-end'
+            justifyContent: isMobile ? (isRTL ? 'flex-end' : 'flex-start') : (isRTL ? 'flex-end' : 'flex-start')
           }}>
             {/* App Store */}
             <a
-              href="https://apps.apple.com/"
+              href={heroData.appleLink}
               target="_blank"
               rel="noopener noreferrer"
               style={{
@@ -1048,7 +1053,7 @@ const Home = () => {
 
             {/* Google Play */}
             <a
-              href="https://play.google.com/store"
+              href={heroData.googleLink}
               target="_blank"
               rel="noopener noreferrer"
               style={{
@@ -1075,48 +1080,6 @@ const Home = () => {
           </div>
         </div>
         </div>
-        
-        {/* Profile Picture - خارج clipped div - تظهر في جميع الأوضاع */}
-        {true && (
-          <div
-            style={{
-              position: 'absolute',
-              bottom: isMobile
-                ? 'calc(50% - 25px)'
-                : isIPadPro 
-                  ? (isPortrait ? 'calc(60% - 70px)' : 'calc(60% - 60px)') 
-                  : isTablet 
-                    ? (isPortrait ? 'calc(60% - 65px)' : 'calc(60% - 55px)') 
-                    : (isPortrait ? 'calc(60% - 70px)' : 'calc(60% - 60px)'),
-              left: isMobile
-                ? (isLandscape ? 'calc(15px + 80px + 10px)' : 'auto')
-                : isIPadPro 
-                  ? (isPortrait ? 'calc(60px - 35px)' : 'calc(30px - 32px)') 
-                  : isTablet 
-                    ? (isPortrait ? 'calc(50px - 34px)' : 'calc(20px - 31px)') 
-                    : (isPortrait ? 'calc(250px - 35px)' : 'calc(220px - 35px)'),
-              width: isMobile ? '50px' : isIPadPro ? '70px' : isTablet ? '65px' : '80px',
-              height: isMobile ? '50px' : isIPadPro ? '70px' : isTablet ? '65px' : '80px',
-              borderRadius: '50%',
-              overflow: 'hidden',
-              zIndex: 30,
-              transform: isMobile ? (isLandscape ? 'translateY(50%)' : 'none') : 'translateY(50%)',
-              display: 'block',
-              backgroundColor: 'transparent'
-            }}
-          >
-            <img
-              src="/Ellipse 120.png"
-              alt="أحمد سامى"
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                display: 'block'
-              }}
-            />
-          </div>
-        )}
       </div>
 
       {/* Reviews Section - positioned right after green section */}
@@ -1149,7 +1112,7 @@ const Home = () => {
         }}
       >
         {reviews.map((review, index) => (
-          <ReviewCard key={index} name={review.name} text={review.text} countryCode={review.countryCode} isMobile={isMobile} isTablet={isTablet} isPortrait={isPortrait} />
+          <ReviewCard key={index} name={review.name} text={review.text} countryCode={review.countryCode} rating={review.rating} isMobile={isMobile} isTablet={isTablet} isPortrait={isPortrait} />
         ))}
       </div>
 
@@ -1201,9 +1164,9 @@ const Home = () => {
               gap: '40px',
               flex: '1',
               maxWidth: isTablet ? '250px' : '300px',
-              alignItems: 'flex-end',
-              order: 1,
-              marginRight: isTablet ? '10px' : '20px'
+              alignItems: isRTL ? 'flex-end' : 'flex-start',
+              order: isRTL ? 3 : 1,
+              [isRTL ? 'marginLeft' : 'marginRight']: isTablet ? '10px' : '20px'
             }}
           >
             {features
@@ -1216,18 +1179,41 @@ const Home = () => {
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '8px',
-                    alignItems: 'flex-end',
-                    textAlign: 'right',
-                    maxWidth: '280px'
+              alignItems: isRTL ? 'flex-end' : 'flex-start',
+              textAlign: isRTL ? 'right' : 'left',
+              maxWidth: '280px'
                   }}
                 >
-                  <div style={{ fontSize: '32px', marginBottom: '4px', color: '#000' }}>
+                  <div style={{ 
+                    fontSize: '32px', 
+                    marginBottom: '8px', 
+                    color: '#000',
+                    display: 'flex',
+                    justifyContent: isRTL ? 'flex-end' : 'flex-start',
+                    width: '100%',
+                    transform: isRTL ? 'scaleX(-1)' : 'scaleX(1)',
+                    transition: 'transform 0.3s ease'
+                  }}>
                     {React.createElement(feature.icon)}
                   </div>
-                  <h3 style={{ fontWeight: 'bold', fontSize: '16px', color: '#000', margin: 0 }}>
+                  <h3 style={{ 
+                    fontWeight: 'bold', 
+                    fontSize: '16px', 
+                    color: '#000', 
+                    margin: 0,
+                    textAlign: isRTL ? 'right' : 'left',
+                    alignSelf: isRTL ? 'flex-end' : 'flex-start',
+                    width: '100%'
+                  }}>
                     {feature.title}
                   </h3>
-                  <p style={{ fontSize: '13px', color: '#666', lineHeight: '1.6', margin: 0 }}>
+                  <p style={{ 
+                    fontSize: '13px', 
+                    color: '#666', 
+                    lineHeight: '1.6', 
+                    margin: 0,
+                    textAlign: isRTL ? 'right' : 'left'
+                  }}>
                     {feature.description}
                   </p>
                 </div>
@@ -1242,8 +1228,8 @@ const Home = () => {
               display: 'grid',
               gridTemplateColumns: '1fr auto 1fr',
               gridTemplateRows: 'auto auto',
-              gap: '12px',
-              columnGap: '20px',
+              gap: '8px',
+              columnGap: '16px',
               justifyContent: 'center',
               alignItems: 'center',
               width: '100%',
@@ -1252,28 +1238,28 @@ const Home = () => {
           >
             {/* Top row: Left top feature - طرق الدفع */}
             {features
-              .filter(f => f.side === 'left' && f.position === 'top')
+              .filter(f => f.side === (isRTL ? 'right' : 'left') && f.position === 'top')
               .map((feature, index) => (
                 <div
                   key={`left-top-${index}`}
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '6px',
+                    gap: '4px',
                     alignItems: 'center',
                     textAlign: 'center',
-                    gridColumn: '1',
+                    gridColumn: isRTL ? '3' : '1',
                     gridRow: '1',
-                    marginRight: '8px'
+                    [isRTL ? 'marginLeft' : 'marginRight']: '6px'
                   }}
                 >
-                  <div style={{ fontSize: '22px', marginBottom: '2px', color: '#000' }}>
+                  <div style={{ fontSize: '18px', marginBottom: '0px', color: '#000' }}>
                     {React.createElement(feature.icon)}
                   </div>
-                  <h3 style={{ fontWeight: 'bold', fontSize: '11px', color: '#000', margin: 0, lineHeight: '1.2' }}>
+                  <h3 style={{ fontWeight: 'bold', fontSize: '9px', color: '#000', margin: 0, lineHeight: '1.15' }}>
                     {feature.title}
                   </h3>
-                  <p style={{ fontSize: '9px', color: '#666', lineHeight: '1.3', margin: 0 }}>
+                  <p style={{ fontSize: '7.5px', color: '#666', lineHeight: '1.25', margin: 0 }}>
                     {feature.description}
                   </p>
                 </div>
@@ -1282,11 +1268,11 @@ const Home = () => {
             {/* Phone mockup in center - spans both rows */}
             <div
               style={{
-                width: '140px',
-                height: '280px',
+                width: '120px',
+                height: '240px',
                 backgroundColor: '#4a4a4a',
-                borderRadius: '30px',
-                padding: '5px',
+                borderRadius: '25px',
+                padding: '4px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -1381,27 +1367,27 @@ const Home = () => {
 
             {/* Top row: Right top feature - تتبع الرحلة */}
             {features
-              .filter(f => f.side === 'right' && f.position === 'top')
+              .filter(f => f.side === (isRTL ? 'left' : 'right') && f.position === 'top')
               .map((feature, index) => (
                 <div
                   key={`right-top-${index}`}
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '6px',
+                    gap: '4px',
                     alignItems: 'center',
                     textAlign: 'center',
-                    gridColumn: '3',
+                    gridColumn: isRTL ? '1' : '3',
                     gridRow: '1'
                   }}
                 >
-                  <div style={{ fontSize: '22px', marginBottom: '2px', color: '#000' }}>
+                  <div style={{ fontSize: '18px', marginBottom: '0px', color: '#000' }}>
                     {React.createElement(feature.icon)}
                   </div>
-                  <h3 style={{ fontWeight: 'bold', fontSize: '11px', color: '#000', margin: 0, lineHeight: '1.2' }}>
+                  <h3 style={{ fontWeight: 'bold', fontSize: '9px', color: '#000', margin: 0, lineHeight: '1.15' }}>
                     {feature.title}
                   </h3>
-                  <p style={{ fontSize: '9px', color: '#666', lineHeight: '1.3', margin: 0 }}>
+                  <p style={{ fontSize: '7.5px', color: '#666', lineHeight: '1.25', margin: 0 }}>
                     {feature.description}
                   </p>
                 </div>
@@ -1409,28 +1395,28 @@ const Home = () => {
 
             {/* Bottom row: Left bottom feature - حجز سريع */}
             {features
-              .filter(f => f.side === 'left' && f.position === 'bottom')
+              .filter(f => f.side === (isRTL ? 'right' : 'left') && f.position === 'bottom')
               .map((feature, index) => (
                 <div
                   key={`left-bottom-${index}`}
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '6px',
+                    gap: '4px',
                     alignItems: 'center',
                     textAlign: 'center',
-                    gridColumn: '1',
+                    gridColumn: isRTL ? '3' : '1',
                     gridRow: '2',
-                    marginRight: '8px'
+                    [isRTL ? 'marginLeft' : 'marginRight']: '6px'
                   }}
                 >
-                  <div style={{ fontSize: '22px', marginBottom: '2px', color: '#000' }}>
+                  <div style={{ fontSize: '18px', marginBottom: '0px', color: '#000' }}>
                     {React.createElement(feature.icon)}
                   </div>
-                  <h3 style={{ fontWeight: 'bold', fontSize: '11px', color: '#000', margin: 0, lineHeight: '1.2' }}>
+                  <h3 style={{ fontWeight: 'bold', fontSize: '9px', color: '#000', margin: 0, lineHeight: '1.15' }}>
                     {feature.title}
                   </h3>
-                  <p style={{ fontSize: '9px', color: '#666', lineHeight: '1.3', margin: 0 }}>
+                  <p style={{ fontSize: '7.5px', color: '#666', lineHeight: '1.25', margin: 0 }}>
                     {feature.description}
                   </p>
                 </div>
@@ -1438,27 +1424,27 @@ const Home = () => {
 
             {/* Bottom row: Right bottom feature - الأمان */}
             {features
-              .filter(f => f.side === 'right' && f.position === 'bottom')
+              .filter(f => f.side === (isRTL ? 'left' : 'right') && f.position === 'bottom')
               .map((feature, index) => (
                 <div
                   key={`right-bottom-${index}`}
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '6px',
+                    gap: '4px',
                     alignItems: 'center',
                     textAlign: 'center',
-                    gridColumn: '3',
+                    gridColumn: isRTL ? '1' : '3',
                     gridRow: '2'
                   }}
                 >
-                  <div style={{ fontSize: '22px', marginBottom: '2px', color: '#000' }}>
+                  <div style={{ fontSize: '18px', marginBottom: '0px', color: '#000' }}>
                     {React.createElement(feature.icon)}
                   </div>
-                  <h3 style={{ fontWeight: 'bold', fontSize: '11px', color: '#000', margin: 0, lineHeight: '1.2' }}>
+                  <h3 style={{ fontWeight: 'bold', fontSize: '9px', color: '#000', margin: 0, lineHeight: '1.15' }}>
                     {feature.title}
                   </h3>
-                  <p style={{ fontSize: '9px', color: '#666', lineHeight: '1.3', margin: 0 }}>
+                  <p style={{ fontSize: '7.5px', color: '#666', lineHeight: '1.25', margin: 0 }}>
                     {feature.description}
                   </p>
                 </div>
@@ -1575,8 +1561,8 @@ const Home = () => {
               gap: '40px',
               flex: '1',
               maxWidth: isTablet ? '250px' : '300px',
-              alignItems: 'flex-end',
-              order: 3
+              alignItems: isRTL ? 'flex-end' : 'flex-start',
+              order: isRTL ? 1 : 3
             }}
           >
             {features
@@ -1589,18 +1575,41 @@ const Home = () => {
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '8px',
-                    alignItems: 'flex-end',
-                    textAlign: 'right',
-                    maxWidth: '280px'
+              alignItems: isRTL ? 'flex-end' : 'flex-start',
+              textAlign: isRTL ? 'right' : 'left',
+              maxWidth: '280px'
                   }}
                 >
-                  <div style={{ fontSize: '32px', marginBottom: '4px', color: '#000' }}>
+                  <div style={{ 
+                    fontSize: '32px', 
+                    marginBottom: '8px', 
+                    color: '#000',
+                    display: 'flex',
+                    justifyContent: isRTL ? 'flex-end' : 'flex-start',
+                    width: '100%',
+                    transform: isRTL ? 'scaleX(-1)' : 'scaleX(1)',
+                    transition: 'transform 0.3s ease'
+                  }}>
                     {React.createElement(feature.icon)}
                   </div>
-                  <h3 style={{ fontWeight: 'bold', fontSize: '16px', color: '#000', margin: 0 }}>
+                  <h3 style={{ 
+                    fontWeight: 'bold', 
+                    fontSize: '16px', 
+                    color: '#000', 
+                    margin: 0,
+                    textAlign: isRTL ? 'right' : 'left',
+                    alignSelf: isRTL ? 'flex-end' : 'flex-start',
+                    width: '100%'
+                  }}>
                     {feature.title}
                   </h3>
-                  <p style={{ fontSize: '10px', color: '#666', lineHeight: '1.6', margin: 0 }}>
+                  <p style={{ 
+                    fontSize: '10px', 
+                    color: '#666', 
+                    lineHeight: '1.6', 
+                    margin: 0,
+                    textAlign: isRTL ? 'right' : 'left'
+                  }}>
                     {feature.description}
                   </p>
                 </div>
@@ -1634,7 +1643,7 @@ const Home = () => {
       >
         {/* Background Image */}
         <img
-          src="/Frame 34235.png"
+          src="/ph.jpeg"
           alt="Background"
           loading="lazy"
           style={{
@@ -1673,7 +1682,7 @@ const Home = () => {
             onClick={handlePrevSlide}
             style={{
               position: 'absolute',
-              left: isMobile ? '5px' : '10px',
+              [isRTL ? 'right' : 'left']: isMobile ? '5px' : '10px',
               top: '50%',
               transform: 'translateY(-50%)',
               zIndex: 20,
@@ -1701,21 +1710,26 @@ const Home = () => {
               e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
             }}
           >
-            <FaChevronLeft style={{ fontSize: isMobile ? '12px' : '20px', color: '#333', fontWeight: 'bold' }} />
+            {isRTL ? (
+              <FaChevronRight style={{ fontSize: isMobile ? '12px' : '20px', color: '#333', fontWeight: 'bold' }} />
+            ) : (
+              <FaChevronLeft style={{ fontSize: isMobile ? '12px' : '20px', color: '#333', fontWeight: 'bold' }} />
+            )}
           </button>
 
           {/* Carousel Container */}
           <div
             style={{
               display: 'flex',
-              transform: `translateX(calc(-${currentSlide} * (${carouselPhoneSize.width} + ${carouselPhoneSize.gap}) + 0px))`,
+              transform: `translateX(calc(${isRTL ? '' : '-'}${currentSlide} * (${carouselPhoneSize.width} + ${carouselPhoneSize.gap}) + 0px))`,
               transition: 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
               gap: carouselPhoneSize.gap,
               width: 'fit-content',
-              justifyContent: 'flex-start',
+              justifyContent: isRTL ? 'flex-end' : 'flex-start',
               alignItems: 'center',
               willChange: 'transform',
-              paddingLeft: '0px'
+              [isRTL ? 'paddingRight' : 'paddingLeft']: '0px',
+              direction: isRTL ? 'rtl' : 'ltr'
             }}
           >
             {phoneMockups.map((phone, index) => {
@@ -1832,7 +1846,7 @@ const Home = () => {
             onClick={handleNextSlide}
             style={{
               position: 'absolute',
-              right: isMobile ? '5px' : '10px',
+              [isRTL ? 'left' : 'right']: isMobile ? '5px' : '10px',
               top: '50%',
               transform: 'translateY(-50%)',
               zIndex: 20,
@@ -1860,7 +1874,11 @@ const Home = () => {
               e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
             }}
           >
-            <FaChevronRight style={{ fontSize: isMobile ? '12px' : '20px', color: '#333', fontWeight: 'bold' }} />
+            {isRTL ? (
+              <FaChevronLeft style={{ fontSize: isMobile ? '12px' : '20px', color: '#333', fontWeight: 'bold' }} />
+            ) : (
+              <FaChevronRight style={{ fontSize: isMobile ? '12px' : '20px', color: '#333', fontWeight: 'bold' }} />
+            )}
           </button>
       </div>
       </div>
@@ -1934,7 +1952,7 @@ const Home = () => {
             whiteSpace: isMobile ? 'normal' : isTablet ? 'nowrap' : 'nowrap'
           }}
         >
-         . تطبيق كشف ركاب إلكتروني معتمد بالباركود المتحرك وفق أنظمة وزارة النقل
+         {footerData.description}
         </p>
 
         {/* Contact Button - Oval */}
@@ -1963,7 +1981,7 @@ const Home = () => {
             e.currentTarget.style.boxShadow = '0 4px 12px rgba(132, 210, 154, 0.3)';
           }}
         >
-          اتصل بنا
+          {t.contactButton}
         </button>
 
         {/* Social Media Icons */}
@@ -1981,7 +1999,7 @@ const Home = () => {
         >
           {/* Facebook */}
           <a
-            href="https://www.facebook.com/share/1byo91GvPN/"
+            href={footerData.facebookLink}
             target="_blank"
             rel="noopener noreferrer"
             style={{
@@ -2009,7 +2027,7 @@ const Home = () => {
 
           {/* Instagram */}
           <a
-            href="https://www.instagram.com/kashfalrukaab?utm_source=qr&igsh=MW9nOTNzYmtkbnRudQ=="
+            href={footerData.instagramLink}
             target="_blank"
             rel="noopener noreferrer"
             style={{
@@ -2037,7 +2055,7 @@ const Home = () => {
 
           {/* TikTok */}
           <a
-            href="https://www.tiktok.com/@.kashfalrukaab?_r=1&_t=ZS-9238ZERO2CX"
+            href={footerData.tiktokLink}
             target="_blank"
             rel="noopener noreferrer"
             style={{
@@ -2065,7 +2083,7 @@ const Home = () => {
 
           {/* Snapchat */}
           <a
-            href="https://www.snapchat.com/add/kashfalrukaab?share_id=LSm2j3461g8&locale=ar-EG"
+            href={footerData.snapchatLink}
             target="_blank"
             rel="noopener noreferrer"
             style={{
@@ -2183,10 +2201,10 @@ const Home = () => {
                 fontFamily: 'Tajawal, sans-serif',
                 fontWeight: '400',
                 textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)',
-                textAlign: isMobile ? 'center' : isTablet ? 'right' : isIPadPro ? 'right' : 'right'
+                textAlign: isMobile ? 'center' : (isRTL ? 'right' : 'left')
               }}
             >
-              2025 جميع الحقوق محفوظة لتطبيقنا للنقل
+              {t.copyright}
             </p>
           </div>
         </div>
@@ -2194,6 +2212,8 @@ const Home = () => {
 
       </div>
     </div>
+    <LanguageSwitcher />
+    <WhatsAppButton whatsappLink={footerData?.whatsappLink} />
     </>
   );
 };
