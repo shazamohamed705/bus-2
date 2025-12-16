@@ -362,10 +362,11 @@ const Home = () => {
   const phonesPerView = isMobile ? 1 : isTablet ? 2 : 3;
   const maxSlide = Math.max(0, phoneMockups.length - phonesPerView);
   
-  // Handle carousel navigation - stay within image bounds
+  // Handle carousel navigation - infinite loop
   const handlePrevSlide = () => {
     setCurrentSlide((prev) => {
-      if (prev <= 0) return 0;
+      const calculatedMax = Math.max(0, phoneMockups.length - phonesPerView);
+      if (prev <= 0) return calculatedMax; // Go to end if at start
       return Math.max(0, prev - 2); // Move 2 steps at a time
     });
   };
@@ -374,7 +375,7 @@ const Home = () => {
     setCurrentSlide((prev) => {
       // Calculate max slide to keep phones visible within image bounds
       const calculatedMax = Math.max(0, phoneMockups.length - phonesPerView);
-      if (prev >= calculatedMax) return calculatedMax;
+      if (prev >= calculatedMax) return 0; // Go to start if at end
       return Math.min(calculatedMax, prev + 2); // Move 2 steps at a time
     });
   };
@@ -823,100 +824,7 @@ const Home = () => {
           />
           )}
 
-        {/* Phone mockup on green section - opposite side of text */}
-        <div 
-          className={isMobile ? '' : 'absolute'}
-          style={{
-            position: isMobile ? 'relative' : 'absolute',
-            // Phone always opposite to text: RTL (text right) -> phone left, LTR (text left) -> phone right
-            [isRTL ? 'left' : 'right']: isMobile 
-              ? 'auto' 
-              : isIPadPro 
-                ? (isPortrait ? '60px' : '30px') 
-                : isTablet 
-                  ? (isPortrait ? '50px' : '20px') 
-                  : (isPortrait ? '250px' : '220px'),
-            top: isMobile ? 'auto' : '60%',
-            transform: isMobile ? (isRTL ? 'translateX(15px)' : 'translateX(-15px)') : 'translateY(calc(-50% - 20px))',
-            zIndex: 25,
-            width: isMobile 
-              ? (isPortrait ? '160px' : '100px') 
-              : isIPadPro 
-                ? (isPortrait ? '220px' : '150px') 
-                : isTablet 
-                  ? (isPortrait ? '200px' : '140px') 
-                  : '220px',
-            height: 'auto',
-            [isRTL ? 'marginRight' : 'marginLeft']: isMobile 
-              ? (isPortrait ? '20px' : '10px') 
-              : '0',
-            marginTop: isMobile ? '0' : '0',
-            marginBottom: isMobile 
-              ? (isPortrait ? '20px' : '10px') 
-              : '0',
-            flexShrink: 0
-          }}
-        >
-          <div
-            style={{
-              width: '100%',
-              maxWidth: isMobile 
-                ? (isPortrait ? '160px' : '100px') 
-                : isIPadPro 
-                  ? (isPortrait ? '220px' : '150px') 
-                  : isTablet 
-                    ? (isPortrait ? '200px' : '140px') 
-                    : '220px',
-              height: isMobile 
-                ? (isPortrait ? '320px' : '200px') 
-                : isIPadPro 
-                  ? (isPortrait ? '440px' : '300px') 
-                  : isTablet 
-                    ? (isPortrait ? '400px' : '280px') 
-                    : '440px',
-              backgroundColor: 'rgba(205, 179, 179, 0.3)',
-              borderRadius: '15px',
-              padding: '0',
-              boxShadow: '0 8px 30px rgba(0,0,0,0.2)',
-              position: 'relative',
-              border: '4px solid #e7e7e7',
-              overflow: 'hidden',
-              backgroundColor: 'rgba(253, 227, 229, 0.3)' // Removed striped background
-            }}
-          >
-            <div
-              style={{
-                width: '100%',
-                height: '100%',
-                backgroundColor: 'rgba(253, 227, 229, 0.3)',
-                borderRadius: '11px',
-                overflow: 'hidden',
-                position: 'relative',
-                display: 'flex',
-                flexDirection: 'column',
-                padding: isMobile ? '8px' : '12px',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}
-            >
-              <img
-                src="/WhatsApp Image 2025-12-08 at 9.22.03 AM.jpeg"
-                alt="Phone Screen"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  borderRadius: '11px',
-                  position: 'absolute',
-                  top: 0,
-                  left: 0
-                }}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Right side content - text and download buttons - outside clipped div */}
+        {/* Text content - comes first before phone */}
         <div
           style={{
             position: isMobile ? 'relative' : 'absolute',
@@ -1077,6 +985,100 @@ const Home = () => {
                 }}
               />
             </a>
+          </div>
+        </div>
+
+        {/* Phone mockup on green section - comes after text */}
+        <div 
+          className={isMobile ? '' : 'absolute'}
+          style={{
+            position: isMobile ? 'relative' : 'absolute',
+            // Phone position: RTL (text right) -> phone left, LTR (text left) -> phone right
+            [isRTL ? 'left' : 'right']: isMobile 
+              ? 'auto' 
+              : isIPadPro 
+                ? (isPortrait ? '60px' : '30px') 
+                : isTablet 
+                  ? (isPortrait ? '50px' : '20px') 
+                  : (isPortrait ? '250px' : '220px'),
+            top: isMobile ? 'auto' : '60%',
+            transform: isMobile ? (isRTL ? 'translateX(15px)' : 'translateX(-15px)') : 'translateY(calc(-50% - 20px))',
+            zIndex: 25,
+            width: isMobile 
+              ? (isPortrait ? '160px' : '100px') 
+              : isIPadPro 
+                ? (isPortrait ? '220px' : '150px') 
+                : isTablet 
+                  ? (isPortrait ? '200px' : '140px') 
+                  : '220px',
+            height: 'auto',
+            [isRTL ? 'marginRight' : 'marginLeft']: isMobile 
+              ? (isPortrait ? '20px' : '10px') 
+              : '0',
+            marginTop: isMobile ? '0' : '0',
+            marginBottom: isMobile 
+              ? (isPortrait ? '20px' : '10px') 
+              : '0',
+            flexShrink: 0
+          }}
+        >
+          <div
+            style={{
+              width: '100%',
+              maxWidth: isMobile 
+                ? (isPortrait ? '160px' : '100px') 
+                : isIPadPro 
+                  ? (isPortrait ? '220px' : '150px') 
+                  : isTablet 
+                    ? (isPortrait ? '200px' : '140px') 
+                    : '220px',
+              height: isMobile 
+                ? (isPortrait ? '280px' : '180px') 
+                : isIPadPro 
+                  ? (isPortrait ? '370px' : '260px') 
+                  : isTablet 
+                    ? (isPortrait ? '340px' : '240px') 
+                    : '370px',
+              backgroundColor: 'rgba(205, 179, 179, 0.3)',
+              borderRadius: '15px',
+              padding: '0',
+              boxShadow: '0 8px 30px rgba(0,0,0,0.2)',
+              position: 'relative',
+              border: '4px solid #e7e7e7',
+              overflow: 'hidden',
+              backgroundColor: 'rgba(253, 227, 229, 0.3)'
+            }}
+          >
+            <div
+              style={{
+                width: '100%',
+                height: '100%',
+                backgroundColor: 'rgba(253, 227, 229, 0.3)',
+                borderRadius: '11px',
+                overflow: 'hidden',
+                position: 'relative',
+                display: 'flex',
+                flexDirection: 'column',
+                padding: isMobile ? '8px' : '12px',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+            >
+              <img
+                src="/WhatsApp Image 2025-12-08 at 9.22.03 AM.jpeg"
+                alt="Phone Screen"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  objectPosition: 'center',
+                  borderRadius: '11px',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0
+                }}
+              />
+            </div>
           </div>
         </div>
         </div>
