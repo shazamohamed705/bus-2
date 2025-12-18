@@ -1,5 +1,5 @@
 // API Service for fetching sections and reviews
-const BASE_URL = 'https://my-bus.storage-te.com/api';
+const BASE_URL = 'https://kashfalrukaab-naql.com/backend/api';
 
 export const fetchSections = async () => {
   try {

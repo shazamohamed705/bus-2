@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { FaWallet, FaCar, FaMapMarkerAlt, FaShieldAlt, FaChevronLeft, FaChevronRight, FaCheckCircle, FaTiktok, FaSnapchat } from 'react-icons/fa';
+import { FaWallet, FaCar, FaMapMarkerAlt, FaShieldAlt, FaChevronLeft, FaChevronRight, FaCheckCircle, FaTiktok, FaSnapchat, FaDownload } from 'react-icons/fa';
 import { HiOutlineMail, HiOutlineLocationMarker } from 'react-icons/hi';
 import { FiFacebook } from 'react-icons/fi';
 import { PiTelegramLogoLight, PiGithubLogo } from 'react-icons/pi';
@@ -855,7 +855,7 @@ const Home = () => {
           <h1
             style={{
               fontSize: isMobile 
-                ? (isPortrait ? '0.6rem' : '0.4rem') 
+                ? (isPortrait ? '0.8rem' : '0.4rem') 
                 : isIPadPro || isTablet
                   ? (isPortrait ? '2.2rem' : '1.4rem') 
                   : (isPortrait ? '3.2rem' : '2.4rem'),
@@ -982,6 +982,50 @@ const Home = () => {
                   width: 'auto',
                   borderRadius: '8px',
                   display: 'block'
+                }}
+              />
+            </a>
+
+            {/* APK Download */}
+            <a
+              href="/app-release.apk"
+              download="app-release.apk"
+              title={t.downloadAppTooltip || 'تحميل التطبيق'}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'transform 0.2s',
+                cursor: 'pointer',
+                backgroundColor: '#84D29A',
+                borderRadius: '8px',
+                padding: isMobile 
+                  ? (isPortrait ? '10px' : '8px') 
+                  : (isPortrait ? '14px' : '12px'),
+                textDecoration: 'none',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+                width: isMobile 
+                  ? (isPortrait ? '40px' : '28px') 
+                  : (isPortrait ? '60px' : '48px'),
+                height: isMobile 
+                  ? (isPortrait ? '40px' : '28px') 
+                  : (isPortrait ? '60px' : '48px')
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.05)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.25)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)';
+                e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
+              }}
+            >
+              <FaDownload 
+                style={{
+                  color: '#fff',
+                  fontSize: isMobile 
+                    ? (isPortrait ? '20px' : '14px') 
+                    : (isPortrait ? '28px' : '22px')
                 }}
               />
             </a>

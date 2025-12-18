@@ -6,6 +6,9 @@ export const translations = {
     heroSubtitle: 'اشترك في تطبيق كشف الركاب وخلّيك نظامي.',
     heroDescription: 'أصدر كشف ركاب معتمد بالباركود المتحرك مع تسجيل كامل تفاصيل الرحلة وقائمة الركاب، لتفادي المخالفات الصادرة من وزارة النقل بكل سهولة وأمان.',
     downloadText: 'قم بتنزيل تطبيقنا',
+    downloadAPK: 'تحميل APK',
+    downloadiPhone: 'تحميل iPhone',
+    downloadAppTooltip: 'تحميل التطبيق',
     
     // Features
     feature1Title: 'طرق دفع مرنة تناسبك مع الباقات المميزة للاشتراك في تطبيق كشف الركاب.',
@@ -35,6 +38,9 @@ export const translations = {
     heroSubtitle: 'Subscribe to the Passenger Manifest app and stay compliant.',
     heroDescription: 'Issue an approved passenger manifest with a dynamic barcode, complete with full trip details and passenger list, to easily avoid violations from the Ministry of Transport with ease and security.',
     downloadText: 'Download our app',
+    downloadAPK: 'Download APK',
+    downloadiPhone: 'Download iPhone',
+    downloadAppTooltip: 'Download App',
     
     // Features
     feature1Title: 'Flexible payment methods with premium subscription packages for the Passenger Manifest app.',
@@ -64,6 +70,9 @@ export const translations = {
     heroSubtitle: 'پاسنجر مینی فیسٹ ایپ میں سبسکرائب کریں اور تعمیل میں رہیں۔',
     heroDescription: 'ایک منظور شدہ پاسنجر مینی فیسٹ جاری کریں جس میں متحرک بارکوڈ، مکمل سفر کی تفصیلات اور مسافروں کی فہرست شامل ہو، تاکہ آسانی اور حفاظت کے ساتھ وزارت نقل و حمل کی خلاف ورزیوں سے بچا جا سکے۔',
     downloadText: 'ہماری ایپ ڈاؤن لوڈ کریں',
+    downloadAPK: 'APK ڈاؤن لوڈ کریں',
+    downloadiPhone: 'iPhone ڈاؤن لوڈ کریں',
+    downloadAppTooltip: 'ایپ ڈاؤن لوڈ کریں',
     
     // Features
     feature1Title: 'مسافروں کی فہرست ایپ میں سبسکرپشن کے لیے خصوصی پیکجز کے ساتھ آپ کی ضروریات کے مطابق لچکدار ادائیگی کے طریقے۔',
