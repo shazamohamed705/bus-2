@@ -10,38 +10,35 @@
       content="تطبيق نقل ذكي يسهل عليك مشاويرك اليومية بخدمة آمنة، سريعة، ومريحة في أي وقت"
     />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/WhatsApp Image 2025-12-07 at 4.42.22 PM 1.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!-- Google Fonts - Tajawal -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
-
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
     <title>تطبيق النقل</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+    <script>
+      // تحديث favicon من API
+      fetch("https://kashfalrukaab-naql.com/backend/api/sections")
+        .then(res => res.json())
+        .then(data => {
+          // نبحث عن السكشن الخاص بالnav
+          const navSection = data.data.sections.find(section => section.prefix_name === "nav-section");
+          if (navSection && navSection.images.length > 0) {
+            const faviconURL = navSection.images[0];
+            // نبحث عن العنصر الحالي أو ننشئ واحد
+            let link = document.querySelector("link[rel*='icon']") || document.createElement("link");
+            link.type = "image/png";
+            link.rel = "icon";
+            link.href = faviconURL;
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
+            document.getElementsByTagName("head")[0].appendChild(link);
+          }
+        })
+        .catch(err => console.error(err));
+    </script>
   </body>
 </html>
