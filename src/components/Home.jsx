@@ -335,10 +335,22 @@ const Home = () => {
   
   // Get sections from API (must be before phoneMockups)
   const firstSection = getSectionByPrefix('first-section');
+  // Single hero image from first-section
+const heroImage = firstSection?.images?.[0];
+
   const secondSection = getSectionByPrefix('second-section');
+  // Single image for second-section
+const secondSectionImage = secondSection?.images?.[0];
+
   const thirdSection = getSectionByPrefix('third-section');
+  // Single image for second-section
+
   const fourthSection = getSectionByPrefix('fourth-section');
-  
+  const navSection = getSectionByPrefix('nav-section');
+  const logoImage = navSection?.images?.[0];
+  console.log('navSection:', navSection);
+console.log('logoImage:', logoImage);
+
   // Phone mockups for carousel from API or fallback
   const phoneMockups = useMemo(() => {
     if (thirdSection && thirdSection.images && thirdSection.images.length > 0) {
@@ -648,7 +660,8 @@ const Home = () => {
         }}
       >
         <img
-          src="/WhatsApp Image 2025-12-07 at 4.42.22 PM 1.png"
+  src={logoImage || ''}
+
           alt="Logo"
           style={{
             height: 'auto',
@@ -1109,7 +1122,8 @@ const Home = () => {
               }}
             >
               <img
-                src="/WhatsApp Image 2025-12-08 at 9.22.03 AM.jpeg"
+                src={heroImage || ''}
+
                 alt="Phone Screen"
                 style={{
                   width: '100%',
@@ -1125,7 +1139,7 @@ const Home = () => {
             </div>
           </div>
         </div>
-        </div>
+        </div>ذ
       </div>
 
       {/* Reviews Section - positioned right after green section */}
@@ -1383,7 +1397,8 @@ const Home = () => {
             }}
           >
             <img
-              src="/WhatsApp Image 2025-12-08 at 9.22.03 AM.jpeg"
+  src={secondSectionImage || "/some-image.png"}
+
               alt="Phone Screen"
               style={{
                 width: '100%',
@@ -1569,8 +1584,8 @@ const Home = () => {
               }}
             >
               <img
-                src="/WhatsApp Image 2025-12-08 at 9.22.03 AM.jpeg"
-                alt="Phone Screen"
+  src={secondSectionImage || "/some-image.png"}
+  alt="Phone Screen"
                 style={{
                   width: '100%',
                   height: '100%',
@@ -1970,7 +1985,8 @@ const Home = () => {
             }}
           >
             <img
-              src="/WhatsApp Image 2025-12-07 at 4.42.22 PM 1.png"
+              src={logoImage}
+
               alt="Tiger Logo"
               style={{
                 width: isMobile ? '120px' : isTablet ? '130px' : '130px',
