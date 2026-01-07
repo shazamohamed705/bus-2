@@ -1139,7 +1139,7 @@ console.log('logoImage:', logoImage);
             </div>
           </div>
         </div>
-        </div>ذ
+        </div>
       </div>
 
       {/* Reviews Section - positioned right after green section */}
